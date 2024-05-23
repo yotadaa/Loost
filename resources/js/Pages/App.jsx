@@ -1,13 +1,26 @@
+import { useState } from "react";
+import AddArtists from "./admin/AddArtist";
 
-
-
-function App() {
+const Children = () => {
     return (
-        <div
-            className='flex flex-col items-center justify-center h-dvh'
-        >
-            <div>Here you go, your entry point.</div>
-            <div>Happy Coding!</div>
+        <div>
+            Root
+        </div>
+    )
+}
+
+function App({ props }) {
+    const [menu, setMenu] = useState({
+        "1": AddArtists
+    })
+
+    console.log(props)
+
+    const MenuComponent = menu[props.menu]; // Get the component dynamically
+
+    return (
+        <div className='flex flex-col items-center justify-center h-dvh'>
+            {props.menu === null ? <Children /> : <MenuComponent props={props} />}
         </div>
     );
 }
