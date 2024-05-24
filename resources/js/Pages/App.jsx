@@ -1,5 +1,6 @@
 import { useState } from "react";
-import AddArtists from "./admin/AddArtist";
+import AddArtists from "./admin/AddArtists";
+import AddAlbums from "./admin/AddAlbums";
 
 const Children = () => {
     return (
@@ -11,7 +12,8 @@ const Children = () => {
 
 function App({ props }) {
     const [menu, setMenu] = useState({
-        "1": AddArtists
+        "1": AddArtists,
+        "2": AddAlbums
     })
 
     console.log(props)

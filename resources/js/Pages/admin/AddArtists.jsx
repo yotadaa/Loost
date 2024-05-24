@@ -100,7 +100,7 @@ export default function AddArtists({ props }) {
                         {countries.map((country, index) => {
                             if (country.nama.toLowerCase().includes(countrySearch.toLowerCase()) || countrySearch === "") {
                                 return (
-                                    <div key={index} className="bg-gray-100 py-2 px-2 rounded-md hover:bg-gray-200 cursor-pointer"
+                                    <div key={index} className={`${form.country === country.id_country ? "bg-gray-200" : "bg-gray-100"} py-2 px-2 rounded-md hover:bg-gray-200 cursor-pointer`}
                                         onClick={() =>
                                             setForm(prevs => ({
                                                 ...prevs,
@@ -118,14 +118,14 @@ export default function AddArtists({ props }) {
                 </div>
                 <input
                     placeholder="Cari Negara"
-                    className="py-2 bg-gray-100 px-2 border border-gray-600"
+                    className={`py-2 bg-gray-100 px-2 border border-gray-600`}
                     value={countrySearch}
                     onChange={(event) => {
                         setCountrySearch(event.target.value)
                     }}
                 />
                 <div>
-                    Negara yang dipilih: {props.countries.find(o => o.id_country === parseInt(form.country))?.nama}
+                    Negara yang dipilih: {props.countries.find(o => o.id_country === parseInt(form.country))?.nama || "Tidak ada"}
                 </div>
                 <input
 
