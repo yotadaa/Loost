@@ -36,7 +36,7 @@ export default function AddAlbums({ props }) {
     const handleSubmit = async (e) => {
         setLoading(true);
 
-        if (form.nama.length === 0 || form.release_date || form.image === null || form.id_artist === null) {
+        if (form.nama.length === 0 || form.release_date === "" || form.image === null || form.id_artist === null) {
             alert("Nama dan Deskripsi harus diisi serta Foto");
             setLoading(false);
             return;
@@ -135,7 +135,7 @@ export default function AddAlbums({ props }) {
                 />
 
                 <div>
-                    Artis yang dipilih: {props.artists.find(o => o.id_artist === parseInt(form.id_artist))?.nama || "Tidak ada"}
+                    Artis yang dipilih: {props.artists.find(o => o.id_penyanyi === parseInt(form.id_artist))?.nama || "Tidak ada"}
                 </div>
                 <div className="flex flex-col gap-1 relative w-full max-h-[300px] overflow-y-scroll">
                     {artists.map((artist, index) => {
@@ -145,7 +145,7 @@ export default function AddAlbums({ props }) {
                                     onClick={() => {
                                         setForm(prevs => ({
                                             ...prevs,
-                                            country: artist.id_country
+                                            id_artist: artist.id_penyanyi
                                         }));
                                         setArtistSearch(artist.nama)
                                     }}

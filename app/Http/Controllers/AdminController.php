@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -33,10 +34,20 @@ class AdminController extends Controller
         ]);
     }
 
-    public function listAlbums(Request $request){
+    public function listArtists(Request $request){
         return Inertia::render('App', [
             "props" => [
                 "menu" => 3,
+                "artists" => DB::table("artists")->get(),
+            ]
+        ]);
+    }
+
+    public function listAlbums(Request $request){
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 4,
+                "albums" => DB::table("albums")->get(),
                 "artists" => DB::table("artists")->get(),
             ]
         ]);
@@ -54,7 +65,6 @@ class AdminController extends Controller
     public function storeArtists(Request $request)
     {
         try {
-            // Validate the request data
             $validatedData = Validator::make($request->all(), [
                 'nama' => 'required|string',
                 'description' => 'required|string',
@@ -103,11 +113,11 @@ class AdminController extends Controller
     public function storeAlbums(Request $request)
     {
         try {
-            // Validate the request data
             $validatedData = Validator::make($request->all(), [
                 'nama' => 'required|string',
-                'description' => 'required|string',
                 'image' => 'nullable|image|mimes:jpg,png,webp',
+                'release_date' => 'required|date',
+                'id_artist' => 'required|int'
             ])->validate();
         } catch (ValidationException $e) {
             return response()->json([
@@ -121,17 +131,17 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $request->file('image')->storeAs('public/assets/loost/artists', $imageName);
-            $artistData['image'] = "assets/loost/artists/" . $imageName;
+            $request->file('image')->storeAs('public/assets/loost/albums', $imageName);
+            $artistData['image'] = "assets/loost/albums/" . $imageName;
 
         }
 
         try {
-            DB::table('artists')
+            DB::table('albums')
             ->insert(['nama' => $artistData['nama'],
-                'description' => $artistData['description'],
-                'profil' => $artistData['image'],
-                'cover' =>  "assets/cover/default.png",
+                'release_date' => Carbon::parse($artistData['release_date']),
+                'foto' => $artistData['image'],
+                'id_artist' => $artistData['id_artist'],
             ]);
 
             return response()->json([

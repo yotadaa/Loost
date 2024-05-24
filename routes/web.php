@@ -13,6 +13,7 @@ Route::get('/add-albums', [AdminController::class, 'addAlbums'])->name('add-albu
 
 
 Route::get('/list-artists', [AdminController::class, 'listArtists'])->name('list-artists');
+Route::get('/list-albums', [AdminController::class, 'listAlbums'])->name('list-albums');
 
 Route::post('/store-artists', [AdminController::class, 'storeArtists'])->name('store-artists');
 Route::post('/store-albums', [AdminController::class, 'storeAlbums'])->name('store-albums');
