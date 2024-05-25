@@ -4,6 +4,7 @@ import AddAlbums from "./admin/AddAlbums";
 import ListArtists from "./admin/ListArtists";
 import { Inertia } from "@inertiajs/inertia";
 import ListAlbums from "./admin/ListAlbums";
+import AddMusics from "./admin/AddMusics";
 
 const Children = ({ menu }) => {
     return (
@@ -27,6 +28,7 @@ function App({ props }) {
     const [menu, setMenu] = useState({
         "1": { element: AddArtists, name: "Tambah Artis", route: "add-artists" },
         "2": { element: AddAlbums, name: "Tambah Album", route: "add-albums" },
+        "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics" },
         "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists" },
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums" },
     })

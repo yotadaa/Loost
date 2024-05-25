@@ -21,6 +21,9 @@ export default function AddArtists({ props }) {
             const file = e.target.files[0];
             if (!file || !file.type.startsWith("image/")) {
                 alert("Please select an image file (JPG, PNG, etc.)");
+                if (fileRef.current) {
+                    fileRef.current.value = '';
+                }
                 return;
             }
 
@@ -43,14 +46,12 @@ export default function AddArtists({ props }) {
         }
 
         try {
-            // Create a new FormData object
             const formData = new FormData();
             formData.append('nama', form.nama);
             formData.append('description', form.description);
             formData.append('image', form.image);
             formData.append('country', form.country);
 
-            // Send the request using axios
             const response = await axios.post(route('store-artists'), formData, {
                 withCredentials: true,
                 headers: {
@@ -90,7 +91,7 @@ export default function AddArtists({ props }) {
         <div className="w-full flex flex-col items-center h-full justify-start">
             <div>This is for add artists menu</div>
 
-            <div className="flex flex-col justify-start gap-2 py-16 min-w-[500px]">
+            <div className="flex flex-col justify -start gap-2 py-16 min-w-[500px]">
                 <div className="flex gap-2">
                     <img
                         className="max-w-[300px] max-h-[300px] bg-cover"

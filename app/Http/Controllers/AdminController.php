@@ -62,6 +62,19 @@ class AdminController extends Controller
         ]);
     }
 
+    public function addMusics(Request $request){
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 5,
+                "artists" => DB::table("artists")->get(),
+                "genres" => DB::table("genres")->get(),
+                "albums" => DB::table("albums")->get(),
+                "languages" => DB::table("languages")->get(),
+                "countries" => DB::table("countries")->get(),
+            ]
+        ]);
+    }
+
     public function storeArtists(Request $request)
     {
         try {
