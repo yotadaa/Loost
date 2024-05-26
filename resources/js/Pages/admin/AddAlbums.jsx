@@ -11,6 +11,7 @@ export default function AddAlbums({ props }) {
     });
 
     const fileRef = useRef(null);
+    const dateRef = useRef(null);
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(false);
     const [artists, setArtists] = useState(props.artists);
@@ -60,16 +61,17 @@ export default function AddAlbums({ props }) {
 
             if (response.data.success) {
                 alert("Berhasil upload");
-                console.log(response.data);
                 setForm(prevs => ({
                     ...prevs,
-                    nama: '',
-                    description: '',
+                    nama: "",
                     image: null,
+                    release_date: "",
+                    id_artist: null,
                 }));
                 if (fileRef.current) {
                     fileRef.current.value = '';
                 }
+                setArtistSearch("");
                 setImage(null)
             } else {
                 alert("Terjadi kesalahan");
@@ -85,9 +87,6 @@ export default function AddAlbums({ props }) {
     const handleDateChange = (event) => {
         setForm({ ...form, release_date: event.target.value });
     };
-
-    useEffect(() => console.log(props.artists.slice(0, 10)), []);
-    useEffect(() => console.log(form), [form])
 
     return (
         <div className="w-full flex flex-col items-center h-full justify-start">

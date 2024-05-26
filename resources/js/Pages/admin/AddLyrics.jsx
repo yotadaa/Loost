@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 
 export default function AddLyrics({
     showAddLyrics, setShowAddLyrics, music, setMusic, src
 }) {
 
+    const audioRef = useRef(null);
     const [lyrics, setLyrics] = useState({
         second: 0,
         sentence: "",
@@ -20,13 +21,17 @@ export default function AddLyrics({
             <div className="p-2">
                 <div
                     className="px-3 py-2 bg-gray-200 border border-black w-fit rounded-md hover:bg-gray-300 cursor-pointer select-none"
-                    onClick={() => setShowAddLyrics(false)}
+                    onClick={() => {
+                        setShowAddLyrics(false);
+                        if (audioRef.current) audioRef.current.pause();
+                    }}
                 >Kembali</div>
             </div>
             <div className="flex flex-col h-full items-center w-full">
                 <audio
                     src={src ? src : ""} type="audio/mpeg" controls
                     className="w-96"
+                    ref={audioRef}
                 />
                 <div>Detik adalah kunci, jika ada detik yang sama, lirik sebelumnya akan ditimpa.</div>
                 <div className="flex gap-1 w-[500px] items-center">
@@ -35,6 +40,7 @@ export default function AddLyrics({
                         placeholder="detik"
                         className="w-20 p-2 rounded-md border border-black text-sm"
                         type='number'
+                        min="0"
                         value={lyrics.second}
                         onChange={(e) => {
                             setLyrics(prevs => ({
@@ -59,13 +65,29 @@ export default function AddLyrics({
                         className="text-sm p-2 bg-gray-200 rounded-md border border-gray-500 cursor-pointer hover:bg-gray-300 select-none"
                         onClick={() => {
                             if (lyrics.second && lyrics.sentence) {
-                                setMusic(prevs => ({
-                                    ...prevs,
-                                    lyrics: {
-                                        ...prevs.lyrics,
-                                        [`${lyrics.second}`]: lyrics.sentence
-                                    }
-                                }))
+                                if (music.lyrics.find(o => o.timestamp === lyrics.second)) {
+                                    setMusic(prevs => ({
+                                        ...prevs,
+                                        lyrics: prevs.lyrics.map(o =>
+                                            o.timestamp === lyrics.second
+                                                ? { timestamp: lyrics.second, sentence: lyrics.sentence }
+                                                : o
+                                        )
+                                    }));
+                                } else {
+                                    setMusic(prevs => {
+                                        const updatedLyrics = [
+                                            ...prevs.lyrics,
+                                            { timestamp: lyrics.second, sentence: lyrics.sentence }
+                                        ].sort((a, b) => a.timestamp - b.timestamp);
+
+                                        return {
+                                            ...prevs,
+                                            lyrics: updatedLyrics
+                                        };
+                                    });
+                                }
+
                                 setLyrics(prevs => ({
                                     ...prevs,
                                     second: 0,
@@ -80,17 +102,17 @@ export default function AddLyrics({
                 <div className="flex flex-col items-center mt-2">
                     <div>Lyrics</div>
                     <div>
-                        {Object.keys(music.lyrics).map((o, i) => (
+                        {music.lyrics.map((o, i) => (
                             <div
                                 key={i}
                                 className="flex py-1 font-semibold"
                             >
                                 <div
                                     className="w-10 text-center bg-purple-300 rounded-l-md"
-                                >{o}</div>
+                                >{o.timestamp}</div>
                                 <div
                                     className="px-3 text-center bg-emerald-300 rounded-r-md"
-                                >{music.lyrics[o]}</div>
+                                >{o.sentence}</div>
                             </div>
                         ))}
                     </div>

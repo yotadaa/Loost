@@ -5,6 +5,7 @@ import ListArtists from "./admin/ListArtists";
 import { Inertia } from "@inertiajs/inertia";
 import ListAlbums from "./admin/ListAlbums";
 import AddMusics from "./admin/AddMusics";
+import PlayMusics from "./admin/PlayMusics";
 
 const Children = ({ menu }) => {
     return (
@@ -31,11 +32,12 @@ function App({ props }) {
         "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics" },
         "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists" },
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums" },
+        "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics" },
     })
 
     console.log(props)
 
-    const MenuComponent = menu[props.menu]?.element; // Get the component dynamically
+    const MenuComponent = menu[props.menu]?.element; 
 
     return (
         <div className='flex flex-col items-center justify-center h-dvh'>

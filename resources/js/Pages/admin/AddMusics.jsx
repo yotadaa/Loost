@@ -16,7 +16,9 @@ export default function AddMusics({ props }) {
         composer: "",
         id_album: null,
         duration: 0,
+        single: true,
         lyrics: [],
+        id_artist: null,
     });
     const [showAddLyrics, setShowAddLyrics] = useState(false)
     const fileRef = useRef(null);
@@ -44,11 +46,11 @@ export default function AddMusics({ props }) {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
 
-            if (!file.type.startsWith("audio/")) {
-                alert("Please select a music file (MP3, WAV, etc.)");
-                if (fileRef.current) fileRef.current.value = '';
-                return;
-            }
+            // if (!file.type.startsWith("audio/")) {
+            //     alert("Please select a music file (MP3, WAV, etc.)");
+            //     if (fileRef.current) fileRef.current.value = '';
+            //     return;
+            // }
 
             setMusic(prevs => ({
                 ...prevs,
@@ -56,16 +58,24 @@ export default function AddMusics({ props }) {
             }));
 
             setAudio(URL.createObjectURL(e.target.files[0]));
-            if (audioRef.current) audioRef.current.play()
+
+            const duration = new Audio(URL.createObjectURL(e.target.files[0]));
+            duration.onloadedmetadata = () => {
+                setMusic(prevs => ({
+                    ...prevs,
+                    duration: duration.duration.toFixed(0)
+                }))
+            }
         }
     };
 
 
     const handleSubmit = async () => {
+
         setLoading(true);
 
         if (
-            !music.judul || !music.id_genre || !music.id_language || !music.id_country || !music.source || !music.release_date || !music.id_album
+            !music.judul || !music.id_genre || !music.id_language || !music.id_country || !music.source || !music.release_date || (!music.single && !music.id_album) || (!music.composer)
         ) {
             alert("Isi seluruh fields");
             setLoading(false);
@@ -81,11 +91,15 @@ export default function AddMusics({ props }) {
             formData.append("id_country", music.id_country);
             formData.append("source", music.source);
             formData.append("release_date", music.release_date);
-            formData.append("id_album", music.judul);
+            formData.append("id_album", music.id_album);
+            formData.append("id_artist", music.id_artist);
             formData.append("duration", music.duration);
             formData.append("composer", music.composer);
+            formData.append("lyrics", JSON.stringify(music.lyrics));
+            formData.append("single", music.single);
 
-            const response = await axios.post(route('add-musics'), formData, {
+
+            const response = await axios.post(route('store-musics'), formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -95,7 +109,7 @@ export default function AddMusics({ props }) {
             if (response.data.success) {
                 alert("Berhasil upload");
                 console.log(response.data);
-                setForm(prevs => ({
+                setMusic(prevs => ({
                     ...prevs,
                     judul: "",
                     id_genre: null,
@@ -122,6 +136,13 @@ export default function AddMusics({ props }) {
         }
     }
 
+    const handleDateChange = (event) => {
+        setMusic(prevs => ({ ...prevs, release_date: event.target.value }));
+    };
+
+    useEffect(() => console.log(music), [music])
+
+
     return (
         <div className="w-full flex flex-col items-center h-full justify-start">
             <AddLyrics
@@ -140,6 +161,7 @@ export default function AddMusics({ props }) {
                     type="file"
                     onChange={handleMusicInput}
                     ref={fileRef}
+                    accept="audio/*"
                 />
                 <div>
                     <audio
@@ -152,11 +174,12 @@ export default function AddMusics({ props }) {
                     />
                 </div>
                 <div className="flex gap-2 items-center">
-                    <div className="p-2 bg-gray-200 border border-gray-500 rounded-md hover:bg-gray-300 cursor-pointer select-none">
-                        Lihat Lirik
-                    </div>
+
                     <div className="p-2 bg-gray-200 border border-gray-500 rounded-md hover:bg-gray-300 cursor-pointer select-none"
-                        onClick={() => setShowAddLyrics(true)}
+                        onClick={() => {
+                            setShowAddLyrics(true);
+                            if (audioRef.current) audioRef.current.pause();
+                        }}
                     >
                         Tambah Lirik
                     </div>
@@ -172,6 +195,16 @@ export default function AddMusics({ props }) {
                                 judul: event.target.value
                             }))
                         }}
+                    />
+                </div>
+                <div className="flex  items-center gap-3">
+                    Tanggal Rilis:
+                    <input
+                        type='date'
+                        placeholder="Nama Album"
+                        className="py-2 bg-gray-100 px-2 border border-gray-600"
+                        value={music.release_date}
+                        onChange={handleDateChange}
                     />
                 </div>
                 <input
@@ -402,6 +435,14 @@ export default function AddMusics({ props }) {
                         </div>
                     </div>
                 </div>
+                <button
+                    className={`rounded-md py-2 shadow-md hover:bg-blue-400 ${loading ? "cursor-not-allowed bg-blue-400" : "cursor-pointer bg-blue-600"} text-gray-50 font-bold`}
+                    onClick={() => {
+                        handleSubmit();
+                    }}
+                >
+                    {loading ? "Uploading" : "Upload"}
+                </button>
             </div>
 
 
