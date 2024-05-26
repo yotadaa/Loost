@@ -144,7 +144,7 @@ export default function AddMusics({ props }) {
 
 
     return (
-        <div className="w-full flex flex-col items-center h-full justify-start">
+        <div className="w-full flex flex-col items-center h-full justify-start ">
             <AddLyrics
                 showAddLyrics={showAddLyrics}
                 setShowAddLyrics={setShowAddLyrics}

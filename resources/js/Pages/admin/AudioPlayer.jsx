@@ -4,11 +4,10 @@ import PauseIcon from '@mui/icons-material/Pause';
 import { motion } from 'framer-motion'
 
 export default function AudioPlayer({
-    audioRef, duration, currentTime, setCurrentTime
+    audioRef, duration, currentTime, setCurrentTime, playing, setPlaying
 }) {
 
 
-    const [playing, setPlaying] = useState(false);
     const [hoveringPlayButton, setHoveringPlayButton] = useState(false);
     const handleSeek = (e) => {
         const newTime = parseFloat(e.target.value);
@@ -29,7 +28,7 @@ export default function AudioPlayer({
         setPlaying(!playing);
     };
     return (
-        <div className="w-[500px] flex flex-col absolute bottom-3 rounded-md bg-gray-900 p-5 items-center">
+        <div className="w-[500px] flex flex-col absolute bottom-0 rounded-md bg-gray-900 p-5 items-center">
             <div className="relative w-[40px] h-[40px] text-gray-200 cursor-pointer"
                 onClick={handlePlayPause}
                 onMouseEnter={() => setHoveringPlayButton(true)}
