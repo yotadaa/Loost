@@ -142,7 +142,7 @@ export default function PlayMusics({ props }) {
                         />
                     </div>
 
-                    <div className="mt-2">
+                    <div className="mt-2 gap-1 flex flex-col">
                         {media.musics.map((o, i) => (
                             <div
                                 className="flex gap-2 items-center justify-between pr-3 bg-emerald-300 p-1 rounded-md shadow-sm"
@@ -155,7 +155,7 @@ export default function PlayMusics({ props }) {
                                     />
                                     <div className="flex flex-col gap-[-5px]">
                                         <div>{o.judul}</div>
-                                        <div className="text-sm text-gray-700 ">{props.artists.find(obj => obj.id_penyanyi === o.id_artist).nama}</div>
+                                        <div className="text-sm text-gray-700 ">{props.artists.find(obj => obj.id_penyanyi === o.id_artist)?.nama}</div>
                                     </div>
                                 </div>
                                 <div className="relative "

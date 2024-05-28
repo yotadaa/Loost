@@ -174,8 +174,6 @@ class AdminController extends Controller
         try {
             $validatedData = Validator::make($request->all(), [
                 'judul' => 'required|string|max:255',
-                'id_genre' => 'integer',
-                'id_artist' => 'integer',
                 'id_language' => 'integer',
                 'id_country' => 'integer',
                 'source' => 'required|file',
@@ -204,7 +202,7 @@ class AdminController extends Controller
         if ($request->hasFile('source')) {
             $musicName = time() . '.' . $request->file('source')->getClientOriginalExtension();
             $request->file('source')->storeAs('public/assets/loost/musics', $musicName);
-            $musicData['source'] = "assets/loost/musics/" . $musicName;
+            $musicData['source'] = "storage/assets/loost/musics/" . $musicName;
         }
 
         $id_musik = time();
@@ -223,8 +221,6 @@ class AdminController extends Controller
                 "id_album" => intval($musicData['id_album']),
                 "id_language" => intval($musicData['id_language']),
                 "id_country" => intval($musicData['id_country']),
-                "id_genre" => intval($musicData['id_genre']),
-                "id_artist" => intval($musicData['id_artist']),
             ]);
 
             for ($i = 0; $i < count($lyrics);$i++) {
@@ -236,12 +232,20 @@ class AdminController extends Controller
                 ]);
             }
 
-            for ($i = 0; $i < count($artist);$i++) {
-                DB::table('penyanyi_musik')
-                ->insert([
-                    "id_musik" => $id_musik,
-                    "id_artist" => $lyrics[$i]
-                ]);
+            try {
+                for ($i = 0; $i < count($artist);$i++) {
+                    DB::table('penyanyi_musik')
+                    ->insert([
+                        "id_musik" => $id_musik,
+                        "id_penyanyi" => $artist[$i]
+                    ]);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'value' => $request->input('artist'),
+                    'message' => 'Failed to create artist: ' . $e->getMessage(),
+                ], 500);
             }
 
             for ($i = 0; $i < count($genre);$i++) {
@@ -261,6 +265,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
+                'value' => $request->input('artist'),
                 'message' => 'Failed to create artist: ' . $e->getMessage(),
             ], 500);
         }

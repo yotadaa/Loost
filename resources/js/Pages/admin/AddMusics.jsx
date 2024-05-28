@@ -100,8 +100,8 @@ export default function AddMusics({ props }) {
             formData.append("composer", music.composer);
             formData.append("lyrics", JSON.stringify(music.lyrics));
             formData.append("single", music.single);
-            formData.append("genre", music.genre);
-            formData.append("artist", music.artist);
+            formData.append("genre", JSON.stringify(music.genre));
+            formData.append("artist", JSON.stringify(music.artist));
 
 
             const response = await axios.post(route('store-musics'), formData, {
@@ -295,7 +295,15 @@ export default function AddMusics({ props }) {
                     Artist yang dipilih:<br></br>
                     {music.artist.map((o, i) =>
                         <div key={i}>
-                            {i + 1}. {artists.find(obj => obj.id_penyanyi === o).nama}
+                            {i + 1}. {artists.find(obj => obj.id_penyanyi === o).nama} <span
+                                className="font-extrabold text-red-500 cursor-pointer hover:underline"
+                                onClick={() => {
+                                    setMusic(p => ({
+                                        ...p,
+                                        artist: [...p.artist].filter((_, index) => index !== i)
+                                    }))
+                                }}
+                            > X</span>
                         </div>
                     )}
                 </div>
