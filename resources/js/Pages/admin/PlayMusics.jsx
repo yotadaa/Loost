@@ -108,6 +108,7 @@ export default function PlayMusics({ props }) {
                     artists={props.artists}
                     musics={props.musics}
                     audioRef={audioRef}
+                    currentTime={currentTime}
                 />
                 <motion.div className="absolute bottom-[200px] rotate-180 rounded-full bg-emerald-400 w-[40px] h-[30px] flex items-center justify-center cursor-pointer hover:bg-emerald-500 pl-2 z-[21]"
                     onClick={() => {
