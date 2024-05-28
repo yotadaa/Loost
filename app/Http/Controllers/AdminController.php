@@ -185,6 +185,8 @@ class AdminController extends Controller
                 'duration' => 'required|integer|min:0',
                 'single' => 'required|string',
                 'lyrics' => 'required',
+                'artist' => 'required',
+                'genre' => 'required'
             ])->validate();
 
         } catch (ValidationException $e) {
@@ -207,6 +209,8 @@ class AdminController extends Controller
 
         $id_musik = time();
         $lyrics = json_decode($musicData['lyrics'], true);
+        $artist = json_decode($musicData['artist'], true);
+        $genre = json_decode($musicData['genre'], true);
 
         try {
             DB::table('musics')
@@ -229,6 +233,22 @@ class AdminController extends Controller
                     "id_musik" => $id_musik,
                     "seconds" => $lyrics[$i]['timestamp'],
                     "sentences" => $lyrics[$i]['sentence']
+                ]);
+            }
+
+            for ($i = 0; $i < count($artist);$i++) {
+                DB::table('penyanyi_musik')
+                ->insert([
+                    "id_musik" => $id_musik,
+                    "id_artist" => $lyrics[$i]
+                ]);
+            }
+
+            for ($i = 0; $i < count($genre);$i++) {
+                DB::table('genre_musik')
+                ->insert([
+                    "id_musik" => $id_musik,
+                    "id_genre" => $genre[$i]
                 ]);
             }
 

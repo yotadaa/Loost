@@ -19,8 +19,11 @@ export default function AddMusics({ props }) {
         single: true,
         lyrics: [],
         id_artist: null,
+        artist: [],
+        genre: [],
     });
     const [showAddLyrics, setShowAddLyrics] = useState(false)
+    const lyricRef = useRef(null);
     const fileRef = useRef(null);
     const audioRef = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -97,6 +100,8 @@ export default function AddMusics({ props }) {
             formData.append("composer", music.composer);
             formData.append("lyrics", JSON.stringify(music.lyrics));
             formData.append("single", music.single);
+            formData.append("genre", music.genre);
+            formData.append("artist", music.artist);
 
 
             const response = await axios.post(route('store-musics'), formData, {
@@ -140,6 +145,39 @@ export default function AddMusics({ props }) {
         setMusic(prevs => ({ ...prevs, release_date: event.target.value }));
     };
 
+    const handleLyricInput = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const parsedLyrics = parseLyrics(content);
+                setMusic(p => ({
+                    ...p,
+                    lyrics: parsedLyrics,
+                }))
+            };
+            reader.readAsText(file);
+        }
+    };
+
+    const parseLyrics = (lyricsText) => {
+        const lyricsArray = lyricsText.trim().split('\n');
+        const lyricsObjects = lyricsArray.map((line) => {
+            const match = line.match(/\[(\d{2}):(\d{2}\.\d{2})\](.*)/);
+            if (match) {
+                const minutes = parseInt(match[1], 10);
+                const seconds = parseFloat(match[2]);
+                const timestamp = (minutes * 60 + seconds).toFixed(2);
+                const sentence = match[3].trim();
+                return { timestamp: timestamp, sentence: sentence };
+            }
+            return null;
+        }).filter(item => item !== null); // Filter out any null results
+
+        return lyricsObjects;
+    };
+
     useEffect(() => console.log(music), [music])
 
 
@@ -173,6 +211,20 @@ export default function AddMusics({ props }) {
                         }}
                     />
                 </div>
+                <div className="flex gap-2 items-center w-full">
+                    <div className="w-fit text-right">
+                        Upload Lirik
+                    </div>
+                    <input
+
+                        className="py-2 bg-gray-100 px-2 border border-gray-600 w-full"
+                        type="file"
+                        onChange={handleLyricInput}
+                        ref={fileRef}
+                        accept="audio/*"
+                        value=''
+                    />
+                </div>
                 <div className="flex gap-2 items-center">
 
                     <div className="p-2 bg-gray-200 border border-gray-500 rounded-md hover:bg-gray-300 cursor-pointer select-none"
@@ -181,7 +233,7 @@ export default function AddMusics({ props }) {
                             if (audioRef.current) audioRef.current.pause();
                         }}
                     >
-                        Tambah Lirik
+                        Lihat Lirik
                     </div>
                 </div>
                 <div>
@@ -216,6 +268,7 @@ export default function AddMusics({ props }) {
                     }}
                 />
 
+
                 <div className={`flex-col gap-1 relative w-full max-h-[300px] overflow-y-scroll ${artistSearch ? "flex" : "hidden"}`}>
                     {artists.map((artist, index) => {
                         if (artist.nama.toLowerCase().includes(artistSearch.toLowerCase()) && artistSearch !== "") {
@@ -225,7 +278,7 @@ export default function AddMusics({ props }) {
                                     onClick={() => {
                                         setMusic(prevs => ({
                                             ...prevs,
-                                            id_artist: artist.id_penyanyi
+                                            artist: [...prevs.artist, artist.id_penyanyi],
                                         }));
                                         setArtistSearch(artist.nama)
                                     }}
@@ -236,6 +289,15 @@ export default function AddMusics({ props }) {
                         }
                         return null;
                     })}
+                </div>
+
+                <div>
+                    Artist yang dipilih:<br></br>
+                    {music.artist.map((o, i) =>
+                        <div key={i}>
+                            {i + 1}. {artists.find(obj => obj.id_penyanyi === o).nama}
+                        </div>
+                    )}
                 </div>
                 <div>
                     <input
@@ -363,7 +425,8 @@ export default function AddMusics({ props }) {
                                         onClick={() => {
                                             setMusic(prevs => ({
                                                 ...prevs,
-                                                id_genre: genre.id_genre
+                                                id_genre: genre.id_genre,
+                                                genre: [...prevs.genre, genre.id_genre]
                                             }));
                                             setGenreSearch(genre.nama);
                                             setShowSearch(prevs => ({ ...prevs, genre: false }))
@@ -378,6 +441,14 @@ export default function AddMusics({ props }) {
                     </div>
                 </div>
 
+                <div>
+                    Genre yang dipilih:<br></br>
+                    {music.genre.map((o, i) =>
+                        <div key={i}>
+                            {i + 1}. {genres.find(obj => obj.id_genre === o).nama}
+                        </div>
+                    )}
+                </div>
                 <div className="flex items-center gap-2">
                     <div
                         className={`py-2 px-5 ${music.single ? "bg-gray-300 border-blue-500 border-4" : "bg-gray-100"} w-fit border border-gray-600 rounded-md select-none cursor-pointer `}
@@ -415,7 +486,7 @@ export default function AddMusics({ props }) {
                         <div className={`absolute w-full top-[-305px] h-[300px] overflow-y-scroll ${albumSearch.length && showSearch.album !== 0 ? "block" : "hidden"}`}>
                             <div className={`relative w-full h-full ${albumSearch.length && showSearch.album !== 0 ? "flex flex-col gap-1 justify-end items-end" : "hidden"}`}>
                                 {albums.slice(0, 10).map((o, i) => (
-                                    <div
+                                    <div key={i}
                                         className={`hover:bg-gray-300 cursor-pointer shadow-xl bg-gray-100 px-2 py-2 border border-gray-500 rounded-md w-full ${showSearch.album && albumSearch.length !== 0 && o.nama.toLowerCase().includes(albumSearch.toLowerCase()) ? "block" : "hidden"}`}
                                         style={{
                                         }}
