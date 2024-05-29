@@ -39,8 +39,8 @@ export default function LyricDisplay({
                 <main className="max-h-[400px] overflow-y-scroll flex flex-col gap-2 mt-2 pl-2 select-none">
                     {musicLyric.map((o, i) => {
                         if (o.id_musik === showLyrics?.id) {
-                            const next = i + 1 < musicLyric.length - 1 ? i + 1 : i;
-                            const isActive = currentTime.toFixed(2) > parseFloat(o.seconds) && currentTime.toFixed(2) <= musicLyric[next].seconds;
+                            const next = i + 1 < musicLyric.length - 1 ? i + 1 : null;
+                            const isActive = currentTime.toFixed(2) > parseFloat(o.seconds) && currentTime.toFixed(2) <= (musicLyric[next]?.seconds || audioRef.current?.duration);
                             return (
                                 <div
                                     key={i}
@@ -48,8 +48,7 @@ export default function LyricDisplay({
                                     onClick={() => {
                                         audioRef.current.currentTime = parseInt(o.seconds);
                                     }}
-                                >
-                                    {parseFloat(o.seconds).toFixed(2)} {o.sentences}
+                                > {o.sentences}
                                 </div>
                             );
                         }
