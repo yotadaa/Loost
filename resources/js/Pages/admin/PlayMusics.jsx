@@ -129,33 +129,33 @@ export default function PlayMusics({ props }) {
         <div className="w-full h-full flex flex-col items-center justify-start p-3 pt-8 overflow-hidden">
 
             <div className="relative h-full w-[500px] overflow-x-hidden">
-                <LyricDisplay
-                    showLyrics={showLyrics}
-                    setShowLyrics={setShowLyrics}
-                    lyrics={props.lyrics}
-                    artists={props.artists}
-                    musics={props.musics}
-                    audioRef={audioRef}
-                    currentTime={currentTime}
-                />
-                <motion.div className="fixed bottom-[200px] rotate-180 rounded-full bg-emerald-400 w-[40px] h-[30px] flex items-center justify-center cursor-pointer hover:bg-emerald-500 pl-2 z-[21]"
-                    onClick={() => {
-                        setShowLyrics(p => ({
-                            ...p,
-                            show: !p.show,
-                        }))
-                    }}
-                    style={{
-                        right: showLyrics.show ? 460 : -15
-                    }}
-                    animate={{
-                        right: showLyrics.show ? 460 : -15
-                    }}
-                >
-
-
-                    <PlayArrowIcon />
-                </motion.div>
+                <div className="w-[500px] relative">
+                    <LyricDisplay
+                        showLyrics={showLyrics}
+                        setShowLyrics={setShowLyrics}
+                        lyrics={props.lyrics}
+                        artists={props.artists}
+                        musics={props.musics}
+                        audioRef={audioRef}
+                        currentTime={currentTime}
+                    />
+                    <div className="fixed right-0  bottom-[200px] rotate-180 rounded-full bg-emerald-400 w-[40px] h-[30px] flex items-center justify-center cursor-pointer hover:bg-emerald-500 pl-2 z-[21]"
+                        onClick={() => {
+                            setShowLyrics(p => ({
+                                ...p,
+                                show: !p.show,
+                            }))
+                        }}
+                    // style={{
+                    //     right: showLyrics.show ? 460 : -15
+                    // }}
+                    // animate={{
+                    //     right: showLyrics.show ? 460 : -15
+                    // }}
+                    >
+                        <PlayArrowIcon />
+                    </div>
+                </div>
                 <div className=" px-5">
                     <div className="w-full">
                         <input

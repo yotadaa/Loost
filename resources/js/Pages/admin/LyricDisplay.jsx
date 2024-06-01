@@ -37,7 +37,7 @@ export default function LyricDisplay({
     };
 
     return (
-        <motion.div className="fixed top-[50px] shadow-xl w-full h-[480px] bg-emerald-400 z-[10] rounded-md"
+        <motion.div className="absolute top-[50px] shadow-xl w-full h-[480px] bg-emerald-400 z-[10] rounded-md"
             style={{
                 right: !showLyrics.show ? -500 : -20
             }}
