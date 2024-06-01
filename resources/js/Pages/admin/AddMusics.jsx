@@ -117,12 +117,8 @@ export default function AddMusics({ props }) {
                 setMusic(prevs => ({
                     ...prevs,
                     judul: "",
-                    id_genre: null,
-                    id_language: null,
-                    id_country: null,
                     source: null,
                     release_date: "",
-                    id_album: null,
                     duration: 0,
                     single: true,
                     lyrics: []
