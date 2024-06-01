@@ -127,6 +127,12 @@ export default function AddMusics({ props }) {
                     single: true,
                     lyrics: []
                 }));
+
+                setArtistSearch("")
+                setCountrySearch("")
+                setGenreSearch("")
+                setLanguageSearch("")
+                setAlbumSearch("")
                 if (fileRef.current) {
                     fileRef.current.value = '';
                 }
@@ -453,7 +459,14 @@ export default function AddMusics({ props }) {
                     Genre yang dipilih:<br></br>
                     {music.genre.map((o, i) =>
                         <div key={i}>
-                            {i + 1}. {genres.find(obj => obj.id_genre === o).nama}
+                            {i + 1}. {genres.find(obj => obj.id_genre === o).nama} <span
+                                onClick={() => {
+                                    setMusic(p => ({
+                                        ...p,
+                                        genre: [...p.genre].filter((_, index) => index !== i)
+                                    }))
+                                }}
+                                className="font-extrabold text-red-500 cursor-pointer underline hover:contrast-200">X</span>
                         </div>
                     )}
                 </div>
@@ -493,7 +506,7 @@ export default function AddMusics({ props }) {
                         />
                         <div className={`absolute w-full top-[-305px] h-[300px] overflow-y-scroll ${albumSearch.length && showSearch.album !== 0 ? "block" : "hidden"}`}>
                             <div className={`relative w-full h-full ${albumSearch.length && showSearch.album !== 0 ? "flex flex-col gap-1 justify-end items-end" : "hidden"}`}>
-                                {albums.slice(0, 10).map((o, i) => (
+                                {albums.map((o, i) => (
                                     <div key={i}
                                         className={`hover:bg-gray-300 cursor-pointer shadow-xl bg-gray-100 px-2 py-2 border border-gray-500 rounded-md w-full ${showSearch.album && albumSearch.length !== 0 && o.nama.toLowerCase().includes(albumSearch.toLowerCase()) ? "block" : "hidden"}`}
                                         style={{

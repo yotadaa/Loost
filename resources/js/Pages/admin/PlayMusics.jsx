@@ -11,6 +11,8 @@ export default function PlayMusics({ props }) {
         lyrics: props.lyrics,
         showing: null,
         src: null,
+        next: null,
+        changing: false
     });
     const [search, setSearch] = useState({
         music: "",
@@ -69,7 +71,10 @@ export default function PlayMusics({ props }) {
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    function handleChangeMusic(src, id) {
+    function handleChangeMusic(src, id, next) {
+        if (media.musics[media.next]?.source) {
+            setMedia(p => ({ ...p, next: next }))
+        }
         setShowLyrics(p => ({
             ...p,
             id: id,
@@ -87,7 +92,6 @@ export default function PlayMusics({ props }) {
 
         // }
         // if (audioRef.current) audioRef.current.play();
-
     }
 
     useEffect(() => {
@@ -95,6 +99,15 @@ export default function PlayMusics({ props }) {
         loadAudio(currentSource);
         // loadAudio("storage/assets/loost/musics/1716712966.mp3");
     }, [currentSource]);
+
+    useEffect(() => {
+        if (media.musics[media.next]?.source) {
+            loadAudio(media.musics[media.next]?.source);
+        } else {
+
+        }
+        console.log(media.musics[media.next]);
+    }, [media.changing])
 
 
     return (
@@ -169,7 +182,7 @@ export default function PlayMusics({ props }) {
                                         <div className="relative cursor-pointer"
                                             onMouseEnter={() => setHoveringPlayButton(o.id_musik)}
                                             onMouseLeave={() => setHoveringPlayButton(null)}
-                                            onClick={() => handleChangeMusic(o.source, o.id_musik)}
+                                            onClick={() => handleChangeMusic(o.source, o.id_musik, i + 1)}
                                         >
                                             <motion.div
                                                 className="z-[1] absolute top-0 left-0 w-full h-full bg-gray-50 opacity-50 rounded-full "
@@ -203,6 +216,8 @@ export default function PlayMusics({ props }) {
                     setCurrentTime={setCurrentTime}
                     playing={playing}
                     setPlaying={setPlaying}
+                    media={media}
+                    setMedia={setMedia}
                 />
             </div>
         </div>
