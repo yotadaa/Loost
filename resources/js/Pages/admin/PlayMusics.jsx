@@ -129,7 +129,7 @@ export default function PlayMusics({ props }) {
         <div className="w-full h-full flex flex-col items-center justify-start p-3 pt-8 overflow-hidden">
 
             <div className="relative h-full w-[500px] overflow-x-hidden">
-                <div className="w-[500px] relative">
+                <div className="w-[500px] relative overflow-x-hidden">
                     <LyricDisplay
                         showLyrics={showLyrics}
                         setShowLyrics={setShowLyrics}

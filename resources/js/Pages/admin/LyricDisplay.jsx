@@ -37,13 +37,16 @@ export default function LyricDisplay({
     };
 
     return (
-        <motion.div className="absolute top-[50px] shadow-xl w-full h-[480px] bg-emerald-400 z-[10] rounded-md"
+        <motion.div className="fixed overflow-x-hidden ml-40 top-[50px] shadow-xl w-[500px] h-[480px] bg-emerald-400 z-[10] rounded-md"
             style={{
-                right: !showLyrics.show ? -500 : -20
+                marginLeft: !showLyrics.show ? 600 : 0
             }}
             animate={{
-                right: !showLyrics.show ? -500 : -20
+                marginLeft: !showLyrics.show ? 600 : 0
             }}
+        // animate={{
+        //     right: !showLyrics.show ? -500 : -20
+        // }}
         >
             {!showLyrics.id ? (
                 <div className="w-full h-[480px] flex items-center justify-center">
