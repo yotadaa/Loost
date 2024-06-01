@@ -159,7 +159,7 @@ export default function AudioPlayer({
 
 
     return (
-        <div className="w-[500px] flex flex-col absolute bottom-0 rounded-md bg-gray-900 p-5 items-center">
+        <div className="w-[500px] fixed flex flex-col bottom-0 rounded-md bg-gray-900 p-5 items-center">
             <div className="w-full flex justify-center items-center">
                 <div className="text-gray-300 hover:text-gray-50 cursor-pointer"
                     onClick={() => {
