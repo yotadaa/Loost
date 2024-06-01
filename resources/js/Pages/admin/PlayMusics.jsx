@@ -208,6 +208,14 @@ export default function PlayMusics({ props }) {
                                 <div className="relative "
                                 >
                                     <div className="flex items-center gap-5">
+                                        <div className="text-sm text-gray-700">
+                                            {props.music_listener.reduce((accumulator, objs) => {
+                                                if (objs.id_musik === o.id_musik) {
+                                                    return accumulator + 1;
+                                                }
+                                                return accumulator;
+                                            }, 0)}
+                                        </div>
                                         <div>
                                             {formatSeconds(parseInt(o.duration))}
                                         </div>

@@ -24,6 +24,7 @@ class AppController extends Controller
                 "lyrics" => DB::table("lyrics")->get(),
                 "artists" => DB::table("artists")->get(),
                 "albums" => DB::table("albums")->get(),
+                "music_listener" => DB::table("music_listener")->get(),
             ]
         ]);
     }
