@@ -1,3 +1,5 @@
+
+import axios from "axios";
 import { useRef, useState, useEffect } from "react";
 import AudioPlayer from "./AudioPlayer";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -43,7 +45,23 @@ export default function PlayMusics({ props }) {
             const audioBlob = await response.blob();
             const audioURL = URL.createObjectURL(audioBlob);
             audioRef.current.src = audioURL;
-            audioRef.current.addEventListener("loadeddata", () => {
+            audioRef.current.addEventListener("loadeddata", async () => {
+                try {
+                    const formData = new FormData();
+
+                    formData.append("id_musik", media.musics.find(o => o.source === src)?.id_musik);
+                    const response = await axios.post(route('listen-to-music'), formData, {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.data.success) {
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
                 setIsLoading(false);
                 setDuration(audioRef.current.duration);
                 audioRef.current.play();

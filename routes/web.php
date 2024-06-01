@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\ListenerController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,3 +21,7 @@ Route::get('/play-musics', [AppController::class, 'playMusics'])->name('play-mus
 Route::post('/store-artists', [AdminController::class, 'storeArtists'])->name('store-artists');
 Route::post('/store-albums', [AdminController::class, 'storeAlbums'])->name('store-albums');
 Route::post('/store-musics', [AdminController::class, 'storeMusics'])->name('store-musics');
+
+
+
+Route::post('/listen-to-music', [ListenerController::class, 'listenSong'])->name('listen-to-music');

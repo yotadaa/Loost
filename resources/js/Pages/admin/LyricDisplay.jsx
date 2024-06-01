@@ -10,7 +10,6 @@ export default function LyricDisplay({
     const [musicLyric, setMusicLyric] = useState(lyrics);
 
     useEffect(() => {
-        console.log(currentTime.toFixed(2))
     }, [currentTime])
 
     const lyricRefs = useRef([]);

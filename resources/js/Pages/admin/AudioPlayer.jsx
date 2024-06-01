@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -258,7 +259,7 @@ export default function AudioPlayer({
                             className="range-input w-fit"
                             max={1}
                             step={0.01}
-                            value={volume.value}
+                            value={(parseFloat(volume.value) || 0.01)}
                             onChange={handleVolumeChange}
                         />
                     </div>

@@ -117,13 +117,25 @@ export default function AddMusics({ props }) {
                 setMusic(prevs => ({
                     ...prevs,
                     judul: "",
+                    id_genre: null,
+                    id_language: null,
+                    id_country: null,
                     source: null,
                     release_date: "",
+                    composer: "",
+                    id_album: null,
                     duration: 0,
                     single: true,
-                    lyrics: []
+                    lyrics: [],
+                    id_artist: null,
+                    artist: [],
+                    genre: [],
                 }));
-
+                setArtist("")
+                setCountry("")
+                setGenre("")
+                setLanguage("")
+                setAlbum("")
                 if (fileRef.current) {
                     fileRef.current.value = '';
                 }
