@@ -124,11 +124,6 @@ export default function AddMusics({ props }) {
                     lyrics: []
                 }));
 
-                setArtistSearch("")
-                setCountrySearch("")
-                setGenreSearch("")
-                setLanguageSearch("")
-                setAlbumSearch("")
                 if (fileRef.current) {
                     fileRef.current.value = '';
                 }

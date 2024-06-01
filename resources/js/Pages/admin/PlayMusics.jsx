@@ -12,11 +12,14 @@ export default function PlayMusics({ props }) {
         showing: null,
         src: null,
         next: null,
-        changing: false
+        changing: false,
+        current: 0,
     });
     const [search, setSearch] = useState({
         music: "",
     });
+
+    const [audioHover, SetAudioHover] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +74,8 @@ export default function PlayMusics({ props }) {
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    function handleChangeMusic(src, id, next) {
+    function handleChangeMusic(src, id, next, curr) {
+        setMedia(p => ({ ...p, current: curr }))
         if (media.musics[media.next]?.source) {
             setMedia(p => ({ ...p, next: next }))
         }
@@ -103,11 +107,22 @@ export default function PlayMusics({ props }) {
     useEffect(() => {
         if (media.musics[media.next]?.source) {
             loadAudio(media.musics[media.next]?.source);
+            setShowLyrics(p => ({ ...p, id: media.musics[media.next]?.id_musik }))
         } else {
 
         }
         console.log(media.musics[media.next]);
-    }, [media.changing])
+    }, [media.changing]);
+
+    useEffect(() => {
+        if (currentTime >= audioRef.current?.duration && !audioHover) {
+            if (media.musics[media.current + 1]?.source) {
+                loadAudio(media.musics[media.current + 1]?.source);
+                setShowLyrics(p => ({ ...p, id: media.musics[media.current + 1]?.id_musik }));
+                setMedia(p => ({ ...p, current: p.current + 1 }))
+            }
+        }
+    }, [currentTime]);
 
 
     return (
@@ -182,7 +197,7 @@ export default function PlayMusics({ props }) {
                                         <div className="relative cursor-pointer"
                                             onMouseEnter={() => setHoveringPlayButton(o.id_musik)}
                                             onMouseLeave={() => setHoveringPlayButton(null)}
-                                            onClick={() => handleChangeMusic(o.source, o.id_musik, i + 1)}
+                                            onClick={() => handleChangeMusic(o.source, o.id_musik, i + 1, i)}
                                         >
                                             <motion.div
                                                 className="z-[1] absolute top-0 left-0 w-full h-full bg-gray-50 opacity-50 rounded-full "
@@ -218,6 +233,8 @@ export default function PlayMusics({ props }) {
                     setPlaying={setPlaying}
                     media={media}
                     setMedia={setMedia}
+                    audioHover={audioHover}
+                    SetAudioHover={SetAudioHover}
                 />
             </div>
         </div>
