@@ -39,10 +39,13 @@ export default function LyricDisplay({
     return (
         <motion.div className="fixed overflow-x-hidden ml-40 top-[50px] shadow-xl w-[500px] h-[480px] bg-emerald-400 z-[10] rounded-md"
             style={{
-                marginLeft: !showLyrics.show ? 600 : 0
+                marginLeft: !showLyrics.show ? 600 : 0,
+                opacity: !showLyrics.show ? 0 : 1,
+
             }}
             animate={{
-                marginLeft: !showLyrics.show ? 600 : 0
+                opacity: !showLyrics.show ? 0 : 1,
+                marginLeft: !showLyrics.show ? 600 : 0,
             }}
         // animate={{
         //     right: !showLyrics.show ? -500 : -20
