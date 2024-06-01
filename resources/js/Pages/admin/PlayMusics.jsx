@@ -171,7 +171,7 @@ export default function PlayMusics({ props }) {
                         />
                     </div>
 
-                    <div className="mt-2 gap-1 flex flex-col">
+                    <div className="mt-2 gap-1 flex flex-col pb-40">
                         {media.musics.map((o, i) => (
                             <div
                                 className="flex gap-2 items-center justify-between pr-3 bg-emerald-300 p-1 rounded-md shadow-sm"
