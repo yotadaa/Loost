@@ -114,15 +114,15 @@ export default function PlayMusics({ props }) {
         console.log(media.musics[media.next]);
     }, [media.changing]);
 
-    useEffect(() => {
-        if (currentTime >= audioRef.current?.duration && !audioHover) {
-            if (media.musics[media.current + 1]?.source) {
-                loadAudio(media.musics[media.current + 1]?.source);
-                setShowLyrics(p => ({ ...p, id: media.musics[media.current + 1]?.id_musik }));
-                setMedia(p => ({ ...p, current: p.current + 1 }))
-            }
-        }
-    }, [currentTime]);
+    // useEffect(() => {
+    //     if (currentTime >= audioRef.current?.duration && !audioHover) {
+    //         if (media.musics[media.current + 1]?.source) {
+    //             loadAudio(media.musics[media.current + 1]?.source);
+    //             setShowLyrics(p => ({ ...p, id: media.musics[media.current + 1]?.id_musik }));
+    //             setMedia(p => ({ ...p, current: p.current + 1 }))
+    //         }
+    //     }
+    // }, [currentTime]);
 
 
     return (
@@ -138,7 +138,7 @@ export default function PlayMusics({ props }) {
                     audioRef={audioRef}
                     currentTime={currentTime}
                 />
-                <motion.div className="absolute bottom-[200px] rotate-180 rounded-full bg-emerald-400 w-[40px] h-[30px] flex items-center justify-center cursor-pointer hover:bg-emerald-500 pl-2 z-[21]"
+                <motion.div className="fixed bottom-[200px] rotate-180 rounded-full bg-emerald-400 w-[40px] h-[30px] flex items-center justify-center cursor-pointer hover:bg-emerald-500 pl-2 z-[21]"
                     onClick={() => {
                         setShowLyrics(p => ({
                             ...p,
