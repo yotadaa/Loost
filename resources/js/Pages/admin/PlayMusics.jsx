@@ -114,15 +114,15 @@ export default function PlayMusics({ props }) {
         console.log(media.musics[media.next]);
     }, [media.changing]);
 
-    // useEffect(() => {
-    //     if (currentTime >= audioRef.current?.duration && !audioHover) {
-    //         if (media.musics[media.current + 1]?.source) {
-    //             loadAudio(media.musics[media.current + 1]?.source);
-    //             setShowLyrics(p => ({ ...p, id: media.musics[media.current + 1]?.id_musik }));
-    //             setMedia(p => ({ ...p, current: p.current + 1 }))
-    //         }
-    //     }
-    // }, [currentTime]);
+    useEffect(() => {
+        if (currentTime >= audioRef.current?.duration && !audioHover) {
+            if (media.musics[media.current + 1]?.source) {
+                loadAudio(media.musics[media.current + 1]?.source);
+                setShowLyrics(p => ({ ...p, id: media.musics[media.current + 1]?.id_musik }));
+                setMedia(p => ({ ...p, current: p.current + 1 }))
+            }
+        }
+    }, [currentTime]);
 
 
     return (
