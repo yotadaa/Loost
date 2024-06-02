@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Context from './component/provider/context';
 import AddArtists from "./admin/AddArtists";
 import AddAlbums from "./admin/AddAlbums";
 import ListArtists from "./admin/ListArtists";
@@ -6,10 +7,12 @@ import { Inertia } from "@inertiajs/inertia";
 import ListAlbums from "./admin/ListAlbums";
 import AddMusics from "./admin/AddMusics";
 import PlayMusics from "./admin/PlayMusics";
+import Container from "./component/components/Container";
+import Dashboard from "./component/dashboard/Dashboard";
 
 const Children = ({ menu }) => {
     return (
-        <div className="flex flex-col gap-2 h-full justify-center">
+        <div className="flex flex-col items-center justify-center h-dvh gap-2">
             {Object.keys(menu).map((m, i) =>
                 <div
                     key={i}
@@ -33,16 +36,28 @@ function App({ props }) {
         "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists" },
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums" },
         "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics" },
+        "7": { element: Container, name: "Home", route: "home", child: Dashboard }
     })
 
-    console.log(props)
+    const MenuComponent = menu[props.menu]?.element;
+    const [menuComponent, setMenuComponent] = useState({
+        width: 200,
+        edgeHover: false,
+        edgeMoving: false,
+        edgeHold: false,
+        
+    })
 
-    const MenuComponent = menu[props.menu]?.element; 
-
+    const contextValue = { menuComponent, setMenuComponent };
     return (
-        <div className='flex flex-col items-center justify-center h-dvh'>
-            {props.menu === null ? <Children menu={menu} /> : <MenuComponent props={props} />}
-        </div>
+        <Context.Provider value={contextValue}
+        >
+            <div className=''
+
+            >
+                {props.menu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[props?.menu].child || "div"} />}
+            </div>
+        </Context.Provider>
     );
 }
 
