@@ -12,6 +12,7 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PropTypes from 'prop-types';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
+import ReactAudioPlayer from "react-audio-player";
 
 const PrettoSlider = styled(Slider)(({ theme }) => ({
     color: '#fff',
@@ -156,6 +157,7 @@ export default function AudioPlayer({
             audioRef.current.volume = volume.muted ? 0 : (volume.value);
         }
     }, [volume.muted, audioRef]);
+
 
 
 

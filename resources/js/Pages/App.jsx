@@ -39,14 +39,16 @@ function App({ props }) {
         "7": { element: Container, name: "Home", route: "home", child: Dashboard }
     })
 
+    const [Element, setElement] = useState(menu[props?.menu]?.child || "div")
+
     const MenuComponent = menu[props.menu]?.element;
     const [menuComponent, setMenuComponent] = useState({
-        width: 200,
+        width: parseInt(localStorage.getItem("menu-width")) || 200,
         edgeHover: false,
         edgeMoving: false,
         edgeHold: false,
-        
-    })
+
+    });
 
     const contextValue = { menuComponent, setMenuComponent };
     return (
@@ -55,7 +57,7 @@ function App({ props }) {
             <div className=''
 
             >
-                {props.menu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[props?.menu].child || "div"} />}
+                {props.menu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[props?.menu]?.child || "div"} />}
             </div>
         </Context.Provider>
     );

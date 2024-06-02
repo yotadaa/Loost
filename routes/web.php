@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\AudioStreamController;
 use App\Http\Controllers\ListenerController;
 use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
@@ -28,3 +29,4 @@ Route::post('/store-musics', [AdminController::class, 'storeMusics'])->name('sto
 Route::post('/listen-to-music', [ListenerController::class, 'listenSong'])->name('listen-to-music');
 
 Route::get('/home', [MenuController::class, 'Home'])->name('home');
+Route::get('/audio/{filename}', [AudioStreamController::class, 'streamAudio'])->name('stream-audio');

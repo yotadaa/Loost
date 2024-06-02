@@ -10,6 +10,11 @@ export default function Container(props) {
     useEffect(() => {
         console.log(menuComponent.edgeHold)
     }, [menuComponent.edgeHold])
+
+    useEffect(() => {
+        localStorage.setItem("menu-width", menuComponent.width)
+    }, [menuComponent])
+
     return (
         <div className={`flex h-screen w-screen bg-red-50 ${menuComponent.edgeHold || menuComponent.edgeMoving ? "cursor-grabbing" : menuComponent.edgeHover ? "cursor-grab" : "cursor-default"}`}
             onMouseDown={() => setMenuComponent(p => ({ ...p, edgeHold: true && p.edgeHover }))}
@@ -25,7 +30,7 @@ export default function Container(props) {
             }}
         >
             <Menu />
-            <Element />
+            <Element props={props} />
         </div>
     );
 }

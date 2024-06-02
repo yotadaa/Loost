@@ -37,19 +37,18 @@ export default function PlayMusics({ props }) {
 
     const loadAudio = async (src) => {
         setIsLoading(true);
+        setHasError(false);
+
         try {
-            const response = await fetch(src);
-            if (!response.ok) {
-                throw new Error(`Audio failed to load: ${response.statusText}`);
-            }
-            const audioBlob = await response.blob();
-            const audioURL = URL.createObjectURL(audioBlob);
+            const filename = media.musics.find(o => o.source === src)?.id_musik
+            const audioURL = `audio/${filename}.mp3`;
             audioRef.current.src = audioURL;
-            audioRef.current.addEventListener("loadeddata", async () => {
+
+            audioRef.current.addEventListener('loadeddata', async () => {
                 try {
                     const formData = new FormData();
-
                     formData.append("id_musik", media.musics.find(o => o.source === src)?.id_musik);
+
                     const response = await axios.post(route('listen-to-music'), formData, {
                         withCredentials: true,
                         headers: {
@@ -58,23 +57,29 @@ export default function PlayMusics({ props }) {
                     });
 
                     if (response.data.success) {
+                        console.log('Music tracking recorded');
                     }
                 } catch (e) {
-                    console.error(e);
+                    console.error('Error tracking music play:', e);
                 }
+
                 setIsLoading(false);
                 setDuration(audioRef.current.duration);
                 audioRef.current.play();
                 setPlaying(true);
             });
-            audioRef.current.addEventListener("error", () => {
-                setHasError(true); // Set error state
+
+            audioRef.current.addEventListener('error', () => {
+                setHasError(true);
+                setIsLoading(false);
             });
         } catch (error) {
-            console.error("Error loading audio:", error);
+            console.error('Error loading audio:', error);
             setHasError(true);
+            setIsLoading(false);
         }
     };
+
 
     function formatSeconds(seconds) {
         // Handle negative or non-numeric inputs (optional)
@@ -129,7 +134,6 @@ export default function PlayMusics({ props }) {
         } else {
 
         }
-        console.log(media.musics[media.next]);
     }, [media.changing]);
 
     useEffect(() => {
