@@ -98,7 +98,6 @@ class AdminController extends Controller
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->storeAs('public/assets/loost/artists', $imageName);
             $artistData['image'] = "assets/loost/artists/" . $imageName;
-
         }
 
         try {
@@ -118,7 +117,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create artist: ' . $e->getMessage(),
+                'message' => 'Failed to     create artist: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -184,7 +183,8 @@ class AdminController extends Controller
                 'single' => 'required|string',
                 'lyrics' => 'required',
                 'artist' => 'required',
-                'genre' => 'required'
+                'genre' => 'required',
+                'single_cover' => 'nullable|image|mimes:jpg,png,webp'
             ])->validate();
 
         } catch (ValidationException $e) {
@@ -204,6 +204,11 @@ class AdminController extends Controller
             $request->file('source')->storeAs('public/assets/loost/musics', $musicName);
             $musicData['source'] = "storage/assets/loost/musics/" . $musicName;
         }
+        if ($request->hasFile('single_cover')) {
+            $singleName = time() . '.' . $request->file('single_cover')->getClientOriginalExtension();
+            $request->file('single_cover')->storeAs('public/assets/loost/single', $singleName);
+            $musicData['single_cover'] = "storage/assets/loost/single/" . $singleName;
+        }
 
         $id_musik = time();
         $lyrics = json_decode($musicData['lyrics'], true);
@@ -218,9 +223,11 @@ class AdminController extends Controller
                 "source" => $musicData['source'],
                 "release_date" => $musicData['release_date'],
                 "duration" => intval($musicData['duration']),
-                "id_album" => intval($musicData['id_album']),
+                "id_album" =>  $musicData['single'] === "true" ? null :intval($musicData['id_album']),
                 "id_language" => intval($musicData['id_language']),
                 "id_country" => intval($musicData['id_country']),
+                "single" => $musicData['single'] === "true" ? "T" : "F",
+                "artwork" => $musicData['single'] === "true" ? $musicData["single_cover"] : null,
             ]);
 
             for ($i = 0; $i < count($lyrics);$i++) {

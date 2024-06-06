@@ -5,10 +5,10 @@ export default function ListArtists({ props }) {
 
     const [properties, setProperties] = useState({
         swell: null,
-    })
+    });
 
     return (
-        <div className="h-full p-10">
+        <div className="h-full max-w-full w-full sp-10">
             <div
                 className="flex flex-col justify-start items-start h-full gap-2 p-10"
             >
@@ -27,7 +27,7 @@ export default function ListArtists({ props }) {
                                 }))
                             }
                         }}
-                        className=" py-2 bg-gray-100 w-[500px] px-2 rounded-md hover:bg-gray-200 cursor-pointer"
+                        className=" py-2 bg-gray-100 w-full max-w-[500px] px-2 rounded-md hover:bg-gray-200 cursor-pointer"
                     >
                         <div>{artist.nama}</div>
                         <div
@@ -36,16 +36,10 @@ export default function ListArtists({ props }) {
                             }}
                             className="mt-2"
                         >
-                            <div className="w-full h-fit relative overflow-hidden"
-                                style={{
-                                    paddingTop: '70%',
-                                }}
-                            >
-                                <img
-                                    className="absolute top-0 left-0 w-[300px] h-[300px] rounded-full"
-                                    style={{ objectFit: 'cover' }}
-                                    src={"/storage/" + artist.profil} alt="Artist Profile" />
-                            </div>
+                            <img
+                                className=" w-[300px] h-[300px] rounded-xl"
+                                style={{ objectFit: 'cover' }}
+                                src={"/storage/" + artist.profil} alt="Artist Profile" />
                             <div
                                 className="mt-2">
                                 {artist.description}

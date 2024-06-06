@@ -148,10 +148,10 @@ export default function PlayMusics({ props }) {
 
 
     return (
-        <div className="w-full h-full flex flex-col items-center justify-start p-3 pt-8 overflow-hidden">
+        <div className="w-full h-full flex flex-col items-center justify-start pt-8 pb-10 overflow-hidden">
 
-            <div className="relative h-full w-[500px] overflow-x-hidden">
-                <div className="w-[500px] relative overflow-x-hidden">
+            <div className="relative h-full max-w-[500px] overflow-x-hidden">
+                <div className="max-w-[500px] relative overflow-x-hidden">
                     <LyricDisplay
                         showLyrics={showLyrics}
                         setShowLyrics={setShowLyrics}
@@ -201,7 +201,7 @@ export default function PlayMusics({ props }) {
                             >
                                 <div className="flex gap-2 items-center">
                                     <img
-                                        src={"storage/" + props.albums.find(obj => obj.id_album === o.id_album).foto}
+                                        src={o.single === "T" ? o.artwork : "storage/" + props.albums.find(obj => obj.id_album === o.id_album)?.foto}
                                         className="w-10 h-10 rounded-md shadow-md"
                                     />
                                     <div className="flex flex-col gap-[-5px]">

@@ -91,13 +91,13 @@ export default function AddArtists({ props }) {
         <div className="w-full flex flex-col items-center h-full justify-start">
             <div>This is for add artists menu</div>
 
-            <div className="flex flex-col justify -start gap-2 py-16 min-w-[500px]">
+            <div className="flex flex-col justify -start gap-2 py-16 w-full px-2 max-w-[500px]">
                 <div className="flex gap-2">
                     <img
-                        className="max-w-[300px] max-h-[300px] bg-cover"
+                        className="w-1/2 h-fit bg-cover rounded-md shadow-md"
                         src={image}
                     />
-                    <div className="flex flex-col gap-1 relative w-full max-h-[300px] overflow-y-scroll">
+                    <div className="flex flex-col gap-1 relative w-full max-h-[200px] overflow-y-scroll">
                         {countries.map((country, index) => {
                             if (country.nama.toLowerCase().includes(countrySearch.toLowerCase()) || countrySearch === "") {
                                 return (

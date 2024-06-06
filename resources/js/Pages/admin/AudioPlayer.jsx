@@ -9,10 +9,8 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PropTypes from 'prop-types';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
-import ReactAudioPlayer from "react-audio-player";
 
 const PrettoSlider = styled(Slider)(({ theme }) => ({
     color: '#fff',
@@ -162,7 +160,7 @@ export default function AudioPlayer({
 
 
     return (
-        <div className="w-[500px] fixed flex flex-col bottom-0 rounded-md bg-gray-900 p-5 items-center">
+        <div className="max-w-[500px] w-full fixed flex flex-col bottom-0 rounded-md bg-gray-900 p-5 items-center">
             <div className="w-full flex justify-center items-center">
                 <div className="text-gray-300 hover:text-gray-50 cursor-pointer"
                     onClick={() => {

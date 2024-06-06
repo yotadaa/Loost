@@ -10,7 +10,7 @@ export default function ListAlbums({ props }) {
     // const [albums, setAlbums] = useState()
 
     return (
-        <div className="h-full p-10">
+        <div className="h-full w-full max-w-full p-10">
             <div
                 className="flex flex-col justify-start items-start h-full gap-2 p-10"
             >
@@ -29,7 +29,7 @@ export default function ListAlbums({ props }) {
                                 }))
                             }
                         }}
-                        className=" py-2 bg-gray-100 w-[500px] px-2 rounded-md hover:bg-gray-200 cursor-pointer"
+                        className=" py-2 bg-gray-100 w-full max-w-[500px] px-2 rounded-md hover:bg-gray-200 cursor-pointer"
                     >
                         <div>{album.nama}</div>
                         <div

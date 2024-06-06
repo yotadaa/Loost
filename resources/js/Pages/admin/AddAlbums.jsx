@@ -89,10 +89,10 @@ export default function AddAlbums({ props }) {
     };
 
     return (
-        <div className="w-full flex flex-col items-center h-full justify-start">
+        <div className=" w-full px-2 flex flex-col items-center h-full justify-center">
             <div>This is for add ALBUMS menu</div>
 
-            <div className="flex flex-col justify-start gap-2 py-16 min-w-[500px]">
+            <div className="flex flex-col justify-start gap-2 py-16 max-w-[500px] w-full">
                 <div className="flex gap-2">
                     <img
                         className="max-w-[300px] max-h-[300px] bg-cover"

@@ -21,7 +21,10 @@ export default function AddMusics({ props }) {
         id_artist: null,
         artist: [],
         genre: [],
+        singleImage: null,
+        singleRef: useRef(null),
     });
+    const singleImageRef = useRef(null);
     const [showAddLyrics, setShowAddLyrics] = useState(false)
     const lyricRef = useRef(null);
     const fileRef = useRef(null);
@@ -43,7 +46,28 @@ export default function AddMusics({ props }) {
         album: false,
         bahasa: false,
         negara: false,
-    })
+    });
+
+    const handleSingleImage = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            if (!file || !file.type.startsWith("image/")) {
+                alert("Please select an image file (JPG, PNG, etc.)");
+                if (music.singleRef.current) {
+                    music.singleRef.current.value = '';
+                }
+                return;
+            }
+
+
+            setMusic(p => ({
+                ...p,
+                singleImage: e.target.files[0]
+            }));
+
+            singleImageRef.current.src = URL.createObjectURL(e.target.files[0]);
+        }
+    }
 
     const handleMusicInput = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -78,7 +102,7 @@ export default function AddMusics({ props }) {
         setLoading(true);
 
         if (
-            !music.judul || !music.id_genre || !music.id_language || !music.id_country || !music.source || !music.release_date || (!music.single && !music.id_album) || (!music.composer)
+            !music.judul || !music.id_genre || !music.id_language || !music.id_country || !music.source || !music.release_date || (!music.single && !music.id_album) || (!music.composer) || (music.single && !music.singleImage)
         ) {
             alert("Isi seluruh fields");
             setLoading(false);
@@ -102,6 +126,7 @@ export default function AddMusics({ props }) {
             formData.append("single", music.single);
             formData.append("genre", JSON.stringify(music.genre));
             formData.append("artist", JSON.stringify(music.artist));
+            formData.append("single_cover", music.singleImage);
 
 
             const response = await axios.post(route('store-musics'), formData, {
@@ -131,14 +156,18 @@ export default function AddMusics({ props }) {
                     artist: [],
                     genre: [],
                 }));
-                setArtist("")
-                setCountry("")
-                setGenre("")
-                setLanguage("")
-                setAlbum("")
+                setArtistSearch("")
+                setCountrySearch("")
+                setGenreSearch("")
+                setLanguageSearch("")
+                setAlbumSearch("")
                 if (fileRef.current) {
                     fileRef.current.value = '';
                 }
+
+                setMusic(p => ({ ...p, singleImage: null }))
+                singleImageRef.current.src = "";
+                music.singleRef.current.value = "";
             } else {
                 alert("Terjadi kesalahan");
                 console.log(response.data);
@@ -191,7 +220,7 @@ export default function AddMusics({ props }) {
 
 
     return (
-        <div className="w-full flex flex-col items-center h-full justify-start ">
+        <div className="w-full flex flex-col items-center h-full justify-start px-3 ">
             <AddLyrics
                 showAddLyrics={showAddLyrics}
                 setShowAddLyrics={setShowAddLyrics}
@@ -201,7 +230,7 @@ export default function AddMusics({ props }) {
             />
             <div>This is for add musics menu</div>
 
-            <div className="flex flex-col justify-start gap-2 py-16 min-w-[500px]">
+            <div className="flex flex-col justify-start gap-2 py-16 w-full max-w-[500px]">
                 <input
 
                     className="py-2 bg-gray-100 px-2 border border-gray-600"
@@ -490,7 +519,10 @@ export default function AddMusics({ props }) {
                             setMusic(prevs => ({
                                 ...prevs,
                                 single: false
-                            }))
+                            }));
+                            setMusic(p => ({ ...p, singleImage: null }))
+                            singleImageRef.current.src = "";
+                            music.singleRef.current.value = "";
                         }}
                     >
                         Album
@@ -499,11 +531,12 @@ export default function AddMusics({ props }) {
                         <input
                             placeholder="Cari Album"
                             disabled={music.single}
-                            className="px-2 py-2 border border-gray-500 rounded-md"
+                            className={`px-2 py-2 box-border w-full rounded-md ${!music.single ? "border-2 border-gray-700" : "border border-gray-500 "}`}
                             value={albumSearch}
                             onChange={(e) => {
                                 setAlbumSearch(e.target.value);
-                                setShowSearch(prevs => ({ ...prevs, album: true }))
+                                setShowSearch(prevs => ({ ...prevs, album: true }));
+
                             }}
 
                         />
@@ -530,6 +563,21 @@ export default function AddMusics({ props }) {
                         </div>
                     </div>
                 </div>
+                <input
+
+                    className="py-2 bg-gray-100 px-2 border border-gray-600"
+                    type="file"
+                    style={{
+                        display: music.single ? "block" : "none"
+                    }}
+                    ref={music.singleRef}
+                    onChange={handleSingleImage}
+                />
+                <img
+                    className="w-1/2 h-fit bg-cover rounded-md shadow-md"
+                    src={null}
+                    ref={singleImageRef}
+                />
                 <button
                     className={`rounded-md py-2 shadow-md hover:bg-blue-400 ${loading ? "cursor-not-allowed bg-blue-400" : "cursor-pointer bg-blue-600"} text-gray-50 font-bold`}
                     onClick={() => {
