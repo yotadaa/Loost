@@ -64,6 +64,7 @@ class MenuController extends Controller
                     'musics.source',
                     'musics.artwork',
                     'musics.duration',
+                    'musics.single',
                     'albums.foto',
                     DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
                 )
@@ -71,6 +72,7 @@ class MenuController extends Controller
                 ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
                 ->where('musics.id_album', $album->id_album)
                 ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork',
+                    'musics.single',
                 'musics.duration',)
                 ->orderBy('total_views', 'DESC')
                 ->get();
@@ -85,13 +87,14 @@ class MenuController extends Controller
                 'musics.source',
                 'musics.artwork',
                 'musics.duration',
+                'musics.single',
                 DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
             )
-            ->join('penyanyi_musik', 'musics.id_artist', '=', 'penyanyi_musik.id_penyanyi')
-            ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
-            ->where('musics.id_artist', $artist_id)
-            ->groupBy('musics.id_musik', 'musics.judul','musics.source','musics.artwork',
-            'musics.duration',)
+            ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
+            ->join('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+            ->where('penyanyi_musik.id_penyanyi', $artist_id)
+            ->where("musics.single",'T')    
+            ->groupBy('musics.id_musik', 'musics.judul','musics.source','musics.artwork','musics.duration','musics.single',)
             ->orderBy('total_views', 'DESC')
             ->get();
 

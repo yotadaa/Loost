@@ -25,7 +25,7 @@ export default function Dashboard({ props }) {
             if (response.data.success) {
                 setArtists(response.data.artists);
                 setPopularNow(response.data.populer_now);
-                history.pushState({}, "", `home`)
+                // history.pushState({}, "", `home`)
             }
 
         } catch (e) {

@@ -5,7 +5,7 @@ import Context from "../provider/context"
 
 export default function Menu({ props }) {
 
-    const { menuComponent, setMenuComponent, screen, menu, setCurrentMenu } = useContext(Context);
+    const { menuComponent, setArtistId, setMenuComponent, screen, menu, setCurrentMenu } = useContext(Context);
     const [MENU, setMENU] = useState(Object.keys(menu).map(o => {
         return { ...menu[o], id: o }
     }).slice(6).filter(o => o.show));
@@ -30,6 +30,7 @@ export default function Menu({ props }) {
                                 width: menuComponent.width - 10
                             }}
                             onClick={() => {
+                                setArtistId(null);
                                 setCurrentMenu("7");
                                 history.pushState({}, "", "/home")
                             }}

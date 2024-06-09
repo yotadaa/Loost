@@ -121,7 +121,7 @@ export default function Player({ }) {
     }
 
     const filename = getImageFilename(SONG.current?.single === "T" ? SONG.current?.artwork : SONG.current?.foto);
-    const imageUrl = filename ? route("get-image", { category: "albums", filename }) : '';
+    const imageUrl = filename ? route("get-image", { category: SONG?.current?.single === "T" ? "single" : "albums", filename }) : '';
 
     useEffect(() => {
         const changeWindowsWidth = () => {

@@ -91,7 +91,7 @@ export default function ArtistPage({ props }) {
                     >
                         {ARTIST?.musics.slice(0, 10).map((o, i) => {
                             const filename = getImageFilename(o.single === "T" ? o?.artwork : o?.foto);
-                            const imageUrl = filename ? route("get-image", { category: "albums", filename }) : ''
+                            const imageUrl = filename ? route("get-image", { category: o.single === "T" ? "single" : "albums", filename }) : ''
                             return (
                                 <div
                                     className="flex gap-2 items-center justify-between pr-3 p-1 rounded-md hover:bg-gray-100 py-2"
@@ -102,7 +102,7 @@ export default function ArtistPage({ props }) {
                                         <div className="relative flex items-center shadow-md justify-center">
                                             <img
                                                 src={imageUrl}
-                                                className="w-10 h-10 rounded-md shadow-md object-cover"
+                                                className="w-10 h-10 rounded-md shadow-md object-cover min-w-10"
                                             />
                                             <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
                                                 onClick={() => {
@@ -149,7 +149,7 @@ export default function ArtistPage({ props }) {
                                         <div className="relative flex items-center shadow-md justify-center">
                                             <img
                                                 src={imageUrl}
-                                                className="w-10 h-10 rounded-md shadow-md object-cover"
+                                                className="w-10 h-10 rounded-md shadow-md object-cover min-w-10"
                                             />
                                             <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
                                             >{SONG.current?.id_musik === o?.id_musik ? <PauseIcon /> : <PlayArrowIcon className='text-gray-50' />}
@@ -174,12 +174,12 @@ export default function ArtistPage({ props }) {
                     </div>
                     <div id="single"
                         style={{
-                            display: active === 0 ? "block" : "none"
+                            display: active === 2 ? "block" : "none"
                         }}
                     >
-                        {ARTIST?.musics.slice(0, 10).map((o, i) => {
+                        {ARTIST?.musics.map((o, i) => {
                             const filename = getImageFilename(o.single === "T" ? o?.artwork : o?.foto);
-                            const imageUrl = filename ? route("get-image", { category: "albums", filename }) : ''
+                            const imageUrl = filename ? route("get-image", { category: "single", filename }) : ''
                             if (o.single === "T") return (
                                 <div
                                     className="flex gap-2 items-center justify-between pr-3 p-1 rounded-md hover:bg-gray-100 py-2"
@@ -190,7 +190,7 @@ export default function ArtistPage({ props }) {
                                         <div className="relative flex items-center shadow-md justify-center">
                                             <img
                                                 src={imageUrl}
-                                                className="w-10 h-10 rounded-md shadow-md object-cover"
+                                                className="w-10 h-10 rounded-md shadow-md object-cover min-w-10"
                                             />
                                             <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
                                                 onClick={() => {

@@ -53,6 +53,7 @@ export default function SongCard({
                     <p className="text-lg font-medium w-full overflow-hidden whitespace-nowrap text-ellipsis hover:underline">{o.judul}</p>
                     <p className="text-xs font-medium hover:underline"
                         onClick={() => {
+                            console.log(o)
                             setArtistId(o?.id_artist);
                         }}
                     >{o.artist_names}</p>
