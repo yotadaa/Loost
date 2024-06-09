@@ -10,6 +10,11 @@ import PlayMusics from "./admin/PlayMusics";
 import Container from "./component/components/Container";
 import Dashboard from "./component/dashboard/Dashboard";
 import { usePage } from "@inertiajs/inertia-react";
+import { Song } from "./component/components/song";
+import axios from "axios";
+
+import HomeIcon from '@mui/icons-material/Home';
+import ArtistPage from "./component/components/artists/ArtistPage";
 
 const Children = ({ menu }) => {
     return (
@@ -31,19 +36,22 @@ const Children = ({ menu }) => {
 
 function App({ props }) {
     const [menu, setMenu] = useState({
-        "1": { element: AddArtists, name: "Tambah Artis", route: "add-artists" },
-        "2": { element: AddAlbums, name: "Tambah Album", route: "add-albums" },
-        "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics" },
-        "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists" },
-        "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums" },
-        "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics" },
-        "7": { element: Container, name: "Home", route: "home", child: Dashboard }
+        "1": { element: AddArtists, name: "Tambah Artis", route: "add-artists", show: false },
+        "2": { element: AddAlbums, name: "Tambah Album", route: "add-albums", show: false },
+        "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics", show: false },
+        "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists", show: false },
+        "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false },
+        "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false },
+        "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
+        "8": { element: Container, name: "Artist Page", route: "artist_page", child: ArtistPage, icon: HomeIcon, show: true },
     })
 
-    const MenuComponent = menu[props.menu]?.element;
+    const [currentMenu, setCurrentMenu] = useState(props.menu);
+
+    const MenuComponent = menu[currentMenu]?.element;
     const [screen, setScreen] = useState({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
     })
     const [menuComponent, setMenuComponent] = useState({
         width: parseInt(localStorage.getItem("menu-width")) || 200,
@@ -51,17 +59,101 @@ function App({ props }) {
         edgeMoving: false,
         edgeHold: false,
     });
+    const [mainComponent, setMainComponent] = useState({
+        width: window.innerWidth - parseInt(localStorage.getItem("menu-width")) || 200
+    });
+
+    const loadAudio = async (src = "/undefined.mp3") => {
+
+        try {
+            const parts = src.split('/');
+            const filename = parts[parts.length - 1];
+            const audioURL = route("stream-audio", { filename: filename });
+            audioRef.current.src = audioURL;
+
+            audioRef.current.addEventListener('loadeddata', async () => {
+                try {
+                    const formData = new FormData();
+                    formData.append("id_musik", SONG?.current?.id_musik);
+
+                    const response = await axios.post(route('listen-to-music'), formData, {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.data.success) {
+                        console.log('Music tracking recorded');
+                    }
+                } catch (e) {
+                    console.error('Error tracking music play:', e);
+                }
+                // audioRef.current.play();
+            });
+
+            audioRef.current.addEventListener('error', (e) => {
+                console.error(e);
+            });
+        } catch (error) {
+            console.error('Error loading audio:', error);
+        }
+    };
+
+    //ARTIST
+    const [ARTIST, setARTIST] = useState(null);
+    const [artistId, setArtistId] = useState(null);
 
     //URL
-    const [URL, setURL] = useState(new URL(location));
+    const URI = new URL(location);
+    const [SONG, setSONG] = useState(Song(null));
+
+    const loadPlayedSong = async () => {
+        const song_id = localStorage.getItem("current") || null;
+        console.log("id_musik: ", song_id)
+        if (!song_id) {
+            console.log("No song ID found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await axios.get(route('get-complete-song', { song_id: song_id }), {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
 
-    /// test for audio playing through page
+            if (response.data.success) {
+                setSONG(prevState => ({ ...prevState, current: response.data.song[0] }));
+                loadAudio(response.data.song[0].source)
+            } else {
+                console.log("Failed to load the song, success flag is false.");
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, };
+    useEffect(() => {
+        loadPlayedSong();
+    }, []);
+
+    //Audio Components
+    const audioRef = useRef();
+    const [AUDIO, setAUDIO] = useState({
+        volume: localStorage.getItem("volume") || 1,
+        currentTime: localStorage.getItem("current-time") || 0,
+        playing: false,
+        muted: false,
+        init: true,
+    });
+
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu };
     return (
         <Context.Provider value={contextValue}>
-            {props.menu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[props.menu]?.child || "div"} />}
+            {currentMenu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[currentMenu]?.child || "div"} />}
         </Context.Provider >
     );
 }

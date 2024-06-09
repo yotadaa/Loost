@@ -40,8 +40,9 @@ export default function PlayMusics({ props }) {
         setHasError(false);
 
         try {
-            const filename = media.musics.find(o => o.source === src)?.id_musik
-            const audioURL = `audio/${filename}.mp3`;
+            const parts = src.split('/');
+            const filename = parts[parts.length - 1];
+            const audioURL = `audio/${filename}`;
             audioRef.current.src = audioURL;
 
             audioRef.current.addEventListener('loadeddata', async () => {

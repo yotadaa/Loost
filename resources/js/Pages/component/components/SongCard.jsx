@@ -6,14 +6,27 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Tooltip from '@mui/material/Tooltip';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import { useContext } from 'react';
+import Context from '../provider/context';
+
+
 
 export default function SongCard({
     o, hover, setHover, index
 }) {
 
+    const { screen, setSONG, mainComponent, setAUDIO, audioRef, setArtistId } = useContext(Context);
 
     return (
-        <div className="relative h-[180px] w-[180px] shadow-md  flex-shrink-0 overflow-hidden cursor-pointer rounded-md "
+        <div className="relative shadow-md   overflow-hidden cursor-pointer rounded-md "
+            style={{
+                // height: screen.width / 4,
+                width: mainComponent.width / 4,
+                maxWidth: 180,
+                maxHeight: 180,
+                minWidth: 120,
+                minHeight: 120
+            }}
             onMouseEnter={() => {
                 setHover(p => ({
                     ...p,
@@ -38,12 +51,25 @@ export default function SongCard({
             <div className={`absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-t from-black via-black/50 via-10% to-transparent rounded-md transition-all duration-300 ease-in-out  ${hover.tren === index ? "pb-20" : "pb-10"}`}>
                 <div className={`absolute bottom-0 left-0 right-0 p-2 text-white transition-all duration-300 ease-in-out  ${hover.tren === index ? "pb-10" : "pb-3"}`}>
                     <p className="text-lg font-medium w-full overflow-hidden whitespace-nowrap text-ellipsis hover:underline">{o.judul}</p>
-                    <p className="text-xs font-medium hover:underline">{o.artist_names}</p>
-
+                    <p className="text-xs font-medium hover:underline"
+                        onClick={() => {
+                            setArtistId(o?.id_artist);
+                            console.log(o)
+                        }}
+                    >{o.artist_names}</p>
                 </div>
             </div>
             <div
                 className={`w-[50px] h-[50px] rounded-full shadow-xl  right-2 absolute bg-gray-50 transition-all duration-300 ease-in-out  ${hover.tren === index ? "bottom-2" : "-bottom-16"} hover:bg-gray-300 flex items-center justify-center`}
+                onClick={() => {
+                    setSONG(p => ({ ...p, current: o }));
+                    localStorage.setItem("current-time", 0);
+                    setAUDIO(p => ({
+                        ...p, playing: true, init: false, currentTime: 0
+                    }));
+                    audioRef.current.play();
+
+                }}
             >
                 <PlayArrowIcon
                     className='scale-[1.5] text-gray-800'

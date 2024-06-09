@@ -1,11 +1,19 @@
-import { useState } from "react"
+import { useContext, useState, useEffect } from "react"
+import Context from "../component/provider/context";
 
 
 export default function ListArtists({ props }) {
 
+    const { setURI, URI } = useContext(Context);
+
     const [properties, setProperties] = useState({
         swell: null,
     });
+
+    useEffect(() => {
+        // URI.searchParams.set("foo", "bar");
+        // history.pushState({}, "", URI);
+    })
 
     return (
         <div className="h-full max-w-full w-full sp-10">

@@ -30,3 +30,8 @@ Route::post('/listen-to-music', [ListenerController::class, 'listenSong'])->name
 
 Route::get('/home', [MenuController::class, 'Home'])->name('home');
 Route::get('/audio/{filename}', [AudioStreamController::class, 'streamAudio'])->name('stream-audio');
+Route::get('/song/{song_id}', [ListenerController::class, 'getCompleteSong'])->name("get-complete-song");
+Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
+Route::get('/artist-only/{artist_id}', [ListenerController::class, 'ArtistGet'])->name("artist-only");
+Route::get('/image/{category}/{filename}',[AudioStreamController::class, 'getImage'])->name("get-image");
+Route::get('/dashboard-only', [ListenerController::class, 'DashboardOnly'])->name("dashboard-only");

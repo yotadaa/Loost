@@ -1,11 +1,12 @@
 
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SubjectIcon from '@mui/icons-material/Subject';
 import SongCard from '../../components/SongCard';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Context from '../../provider/context';
 
 export default function TrendNow({
     screen,
@@ -14,6 +15,7 @@ export default function TrendNow({
     title
 }) {
 
+    const { setSONG, mainComponent } = useContext(Context);
     const scrollContainerRef = useRef(null);
     const [hover, setHover] = useState({
         tren: null,
@@ -36,7 +38,11 @@ export default function TrendNow({
                             className={`flex flex-col overflow-y-visible rounded-md pl-2 custom-scrollbar gap-1 py-1 z-[11] w-[${screen.width - menuComponent.width}px] overflow-hidden`}
                             ref={scrollContainerRef}
                         >
-                            <div className="grid-container">
+                            <div className="grid-container "
+                                style={{
+                                    display: mainComponent.width > 500 ? 'grid' : 'block',
+                                }}
+                            >
                                 {popularNow?.slice(0, (parseInt(screen.width / 200) > 10 ? parseInt(screen.width / 200) : 10)).map((o, i) => (
                                     <div className="grid-item border-t-[1px] gap-10 border-gray-300 w-full" key={i}>
                                         <div className='flex gap-[13px] justify-between w-full'>
@@ -47,11 +53,18 @@ export default function TrendNow({
                                                         width={40}
                                                         className="rounded-sm cursor-pointer hover:contrast-[30%]"
                                                     />
-                                                    <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'><PlayArrowIcon className='text-gray-50' /></div>
+                                                    <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
+                                                        onClick={() => {
+                                                            setSONG(p => ({
+                                                                ...p,
+                                                                current: o,
+                                                            }))
+                                                        }}
+                                                    ><PlayArrowIcon className='text-gray-50' /></div>
                                                 </div>
                                                 <div className="font-semibold">
                                                     <h3>{o.judul}</h3>
-                                                    <h3 className="text-xs">{o.artist_names}</h3>
+                                                    <h3 className="text-xs hover:underline cursor-pointer">{o.artist_names}</h3>
                                                 </div>
                                             </div>
                                             <div className=' bg-opacity-55 hover:bg-opacity-50 p-2 rounded-full transition-all duration-300 ease-in-out '>

@@ -93,16 +93,19 @@ class AdminController extends Controller
         }
 
         $artistData = $validatedData;
+        $id = time();
 
         if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $imageName = $id . '.' . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->storeAs('public/assets/loost/artists', $imageName);
             $artistData['image'] = "assets/loost/artists/" . $imageName;
         }
 
         try {
             DB::table('artists')
-            ->insert(['nama' => $artistData['nama'],
+            ->insert([
+                'id_penyanyi' => $id,
+                'nama' => $artistData['nama'],
                 'description' => $artistData['description'],
                 'profil' => $artistData['image'],
                 'cover' =>  "assets/cover/default.png",

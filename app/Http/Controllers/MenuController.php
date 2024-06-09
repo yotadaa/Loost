@@ -43,4 +43,52 @@ class MenuController extends Controller
             ]
         ]);
     }
+
+    public function ArtistPage(Request $request, $artist_id) {
+        // Fetch the artist by ID
+        $artist = DB::table("artists")->where("id_penyanyi", $artist_id)->get();
+
+        // Fetch the albums by artist ID
+        $albums = DB::table("albums")->where("id_artist", $artist_id)->get();
+
+        // Initialize an empty collection for songs
+        $songs = collect();
+
+        // Iterate through each album to get its songs
+        foreach ($albums as $album) {
+            $albumSongs = DB::table('musics')
+                ->select(
+                    'musics.id_musik',
+                    'musics.judul',
+                    'musics.source',
+                    'musics.artwork',
+                    'musics.duration',
+                    'albums.foto',
+                    DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
+                )
+                ->join('albums', 'musics.id_album', '=', 'albums.id_album')
+                ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+                ->where('musics.id_album', $album->id_album)
+                ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork',
+                'musics.duration',)
+                ->orderBy('total_views', 'DESC')
+                ->get();
+
+            // Merge the album songs into the songs collection
+            $songs = $songs->merge($albumSongs);
+        }
+
+        // Convert the songs collection to an array if needed
+        $finalSongsArray = $songs->toArray();
+
+        // Return the artist, albums, and songs to the view
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 8,
+                "artist" => $artist,
+                "albums" => $albums,  // Pass $albums instead of $album
+                "musics" => $finalSongsArray,
+            ]
+        ]);
+    }
 }
