@@ -15,7 +15,7 @@ export default function TrendNow({
     title
 }) {
 
-    const { setSONG, mainComponent } = useContext(Context);
+    const { setSONG, mainComponent, setArtistId } = useContext(Context);
     const scrollContainerRef = useRef(null);
     const [hover, setHover] = useState({
         tren: null,
@@ -64,7 +64,12 @@ export default function TrendNow({
                                                 </div>
                                                 <div className="font-semibold">
                                                     <h3>{o.judul}</h3>
-                                                    <h3 className="text-xs hover:underline cursor-pointer">{o.artist_names}</h3>
+                                                    <h3 className="text-xs hover:underline cursor-pointer"
+
+                                                        onClick={() => {
+                                                            setArtistId(o?.id_artist);
+                                                        }}
+                                                    >{o.artist_names}</h3>
                                                 </div>
                                             </div>
                                             <div className=' bg-opacity-55 hover:bg-opacity-50 p-2 rounded-full transition-all duration-300 ease-in-out '>

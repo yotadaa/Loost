@@ -12,41 +12,43 @@ import { Tooltip } from "@mui/material";
 
 export default function PlayerController() {
 
-    const { screen, audioRef, AUDIO, setAUDIO } = useContext(Context);
+    const { screen, audioRef, AUDIO, setAUDIO, SONG } = useContext(Context);
 
-    const handlePlayPause = () => {
+    const handlePlayPause = async () => {
         if (!audioRef.current || !audioRef.current.src) {
             console.error('No valid audio source.');
             return;
         }
 
-        if (AUDIO.playing) {
+        if (!AUDIO.playing) {
             audioRef.current.pause();
-            setAUDIO(p => ({ ...p, playing: false }))
+            // setAUDIO({ ...AUDIO, playing: false });
         } else {
             try {
-                audioRef.current.play().then(() => {
-                    setAUDIO(p => ({ ...p, playing: true }))
-                    audioRef.current.currentTime = AUDIO.currentTime || 0;
-                }).catch((e) => {
-                    console.error('Error playing audio:', e);
-                });
+                audioRef.current.play();
+                // setAUDIO({ ...AUDIO, playing: true });
+                audioRef.current.currentTime = AUDIO.currentTime || 0;
             } catch (e) {
-                console.error('Play attempt failed:', e);
+                console.error('Error playing audio:', e);
             }
         }
     };
+
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.code === "Space") {
                 event.preventDefault();
-                handlePlayPause(event);
+                setAUDIO(p => ({ ...p, playing: !p.playing }))
             }
         };
 
         window.addEventListener("keydown", handleKeyDown);
-    }, []);
-    // useEffect(() => { if (AUDIO.playing) audioRef.current.play() }, [AUDIO.playing]);
+
+    }, []); // Ensure useEffect re-runs when AUDIO state changes
+
+    useEffect(() => {
+        handlePlayPause();
+    }, [AUDIO.playing])
 
     return (
         <div>
@@ -74,7 +76,7 @@ export default function PlayerController() {
 
                     {AUDIO.playing ? <PauseIcon className="scale-[1.1]" /> : <PlayArrowIcon className="scale-[1.1]" />}
                     <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "
-                        onClick={handlePlayPause}
+                        onClick={() => setAUDIO(p => ({ ...p, playing: !p.playing }))}
                     ></div>
                 </div>
                 <div className="relative flex items-center justify-center">

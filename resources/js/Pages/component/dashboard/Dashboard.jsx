@@ -12,7 +12,6 @@ export default function Dashboard({ props }) {
     const [artists, setArtists] = useState(props.props.artists);
 
     const getDashboardProperties = async () => {
-        console.log("Loading Dashboard");
         if (props.props.populer_now || props.props.artists) return;
 
         try {
@@ -27,10 +26,8 @@ export default function Dashboard({ props }) {
                 setArtists(response.data.artists);
                 setPopularNow(response.data.populer_now);
                 history.pushState({}, "", `home`)
-                console.log("Done Dashboard");
             }
 
-            console.log("Done")
         } catch (e) {
             console.error(e);
         }

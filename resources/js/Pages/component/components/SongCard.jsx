@@ -54,7 +54,6 @@ export default function SongCard({
                     <p className="text-xs font-medium hover:underline"
                         onClick={() => {
                             setArtistId(o?.id_artist);
-                            console.log(o)
                         }}
                     >{o.artist_names}</p>
                 </div>

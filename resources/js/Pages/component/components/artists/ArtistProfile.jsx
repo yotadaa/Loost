@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
+import Context from "../../provider/context";
 
 export default function ArtistProfile({
     getImageFilename, ARTIST, props
@@ -6,7 +7,8 @@ export default function ArtistProfile({
 
 
 
-    const [filename, setFilename] = useState(getImageFilename(props?.props?.artist ? props?.props?.artist[0].profil : ARTIST?.profil));
+    const { screen } = useContext(Context);
+    const [filename, setFilename] = useState(getImageFilename(props?.props?.artist ? props?.props?.artist[0]?.profil : ARTIST?.profil));
     const imageUrl = filename ? route("get-image", { category: "artists", filename: (filename || "src/undefined.jpg") }) : '';
     const [hover, setHover] = useState(false);
     const someRef = useRef(null);
@@ -14,13 +16,13 @@ export default function ArtistProfile({
 
     useEffect(() => {
         if (someRef.current) {
-            setExtraHeight(someRef.current.clientHeight);
+            setExtraHeight(600);
         }
     }, [someRef.current]);
 
 
     return (
-        <div className={` transition-all duration-300 h-[300px] ease-in-out relative w-full rounded-md overflow-hidden ${hover ? `h-[${extraHeight}px]` : "h-[300px]"}`}
+        <div className={` transition-all duration-300 h-[300px] ease-in-out relative w-full rounded-md overflow-hidden ${hover ? `h-full` : "h-[300px]"}`}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
@@ -39,12 +41,12 @@ export default function ArtistProfile({
             </div>
             <div className="flex-shrink-0">
                 <div className={`absolute flex items-center gap-3  left-0 p-4 text-white transition-all duration-300 ease-in-out ${hover ? "bottom-[70px]" : "bottom-[40px]"}`} >
-                    <div className="w-[60px] h-[60px]">
+                    <div className="w-[60px] h-[60px] min-w-[60px]">
                         <img
                             className="w-full h-full rounded-md shadow-md object-cover"
                             src={route("get-image", { category: "artists", filename: (filename || "src/undefined.jpg") })} />
                     </div>
-                    <div className="text-bottom text-3xl font-bold">
+                    <div className="text-bottom text-3xl font-bold text-nowrap truncate ">
                         <div>{ARTIST?.nama}</div>
                         <div className="font-thin text-sm">123,456,789 pendengar bulanan</div>
                     </div>

@@ -23,7 +23,8 @@ class MenuController extends Controller
                 'musics.artwork',
                 'albums.foto',
                 DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views'),
-                DB::raw('GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names')
+                DB::raw('GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names'),
+                DB::raw('GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
             )
             ->join('musics', 'music_listener.id_musik', '=', 'musics.id_musik')
             ->join('albums', 'musics.id_album', '=', 'albums.id_album')
@@ -77,6 +78,25 @@ class MenuController extends Controller
             // Merge the album songs into the songs collection
             $songs = $songs->merge($albumSongs);
         }
+        $singleSongs = DB::table('musics')
+            ->select(
+                'musics.id_musik',
+                'musics.judul',
+                'musics.source',
+                'musics.artwork',
+                'musics.duration',
+                DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
+            )
+            ->join('penyanyi_musik', 'musics.id_artist', '=', 'penyanyi_musik.id_penyanyi')
+            ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+            ->where('musics.id_artist', $artist_id)
+            ->groupBy('musics.id_musik', 'musics.judul','musics.source','musics.artwork',
+            'musics.duration',)
+            ->orderBy('total_views', 'DESC')
+            ->get();
+
+        // Merge the album songs into the songs collection
+        $songs = $songs->merge($singleSongs);
 
         // Convert the songs collection to an array if needed
         $finalSongsArray = $songs->toArray();

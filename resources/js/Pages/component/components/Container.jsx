@@ -70,29 +70,27 @@ export default function Container({ Element, ...props }) {
             const audioURL = route("stream-audio", { filename: filename });
             audioRef.current.src = audioURL;
 
-            audioRef.current.addEventListener('loadeddata', async () => {
-                try {
-                    const formData = new FormData();
-                    formData.append("id_musik", SONG?.current?.id_musik);
+            try {
+                const formData = new FormData();
+                formData.append("id_musik", SONG?.current?.id_musik);
 
-                    const response = await axios.post(route('listen-to-music'), formData, {
-                        withCredentials: true,
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
+                const response = await axios.post(route('listen-to-music'), formData, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                    if (response.data.success) {
-                    }
-                } catch (e) {
-                    console.error('Error tracking music play:', e);
+                if (response.data.success) {
                 }
-                audioRef.currentTime = AUDIO.currentTime || 0;
-                if (!AUDIO.init) {
-                    audioRef.current.play();
-                    setAUDIO(p => ({ ...p, init: false }))
-                }
-            });
+            } catch (e) {
+                console.error('Error tracking music play:', e);
+            }
+            audioRef.currentTime = AUDIO.currentTime || 0;
+            if (!AUDIO.init) {
+                audioRef.current.play();
+                setAUDIO(p => ({ ...p, init: false }))
+            }
 
             audioRef.current.addEventListener('error', (e) => {
                 console.error(e);
@@ -137,7 +135,8 @@ export default function Container({ Element, ...props }) {
         >
             <div className={`flex w-full`}
                 style={{
-                    maxHeight: screen.height - (screen.width > 500 ? 80 : 80 * 2 - 25)
+                    maxHeight: screen.height - (screen.width > 500 ? 80 : 80 * 2 - 25),
+                    height: screen.height - (screen.width > 500 ? 80 : 80 * 2 - 25)
                 }}
             >
                 {screen.width > 500 ? <Menu /> : ""}

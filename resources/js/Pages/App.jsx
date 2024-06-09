@@ -14,6 +14,7 @@ import { Song } from "./component/components/song";
 import axios from "axios";
 
 import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
 import ArtistPage from "./component/components/artists/ArtistPage";
 
 const Children = ({ menu }) => {
@@ -43,7 +44,7 @@ function App({ props }) {
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false },
         "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false },
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
-        "8": { element: Container, name: "Artist Page", route: "artist_page", child: ArtistPage, icon: HomeIcon, show: true },
+        "8": { element: Container, name: "Artist Page", route: "artist_page", child: ArtistPage, icon: SearchIcon, show: true },
     })
 
     const [currentMenu, setCurrentMenu] = useState(props.menu);
@@ -89,7 +90,6 @@ function App({ props }) {
                 } catch (e) {
                     console.error('Error tracking music play:', e);
                 }
-                // audioRef.current.play();
             });
 
             audioRef.current.addEventListener('error', (e) => {

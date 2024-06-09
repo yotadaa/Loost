@@ -120,7 +120,7 @@ export default function Player({ }) {
         return parts[parts.length - 1];
     }
 
-    const filename = getImageFilename(SONG.current?.single ? SONG.current?.artwork : SONG.current?.foto);
+    const filename = getImageFilename(SONG.current?.single === "T" ? SONG.current?.artwork : SONG.current?.foto);
     const imageUrl = filename ? route("get-image", { category: "albums", filename }) : '';
 
     useEffect(() => {
