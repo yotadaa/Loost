@@ -11,7 +11,7 @@ export default function Menu({ props }) {
     }).slice(6).filter(o => o.show));
 
     return (
-        <div className={`bg-black relative ${screen.width > 500 ? "h-full p-3" : "h-full w-full"} bg-transparent`}>
+        <div className={`bg-black relative ${screen.width > 500 ? "h-full p-3" : "h-full w-full"} bg-transparent z-[10000]`}>
             <div className={`bg-gray-200 relative  ${screen.width > 500 ? "min-w-[70px] w-[200px] max-w-[500px] h-full" : "rounded-none min-w-full h-full"} relative border-[1px] border-black shadow-xl rounded-xl  select-none border-r-[2px] ${menuComponent.edgeHover || menuComponent.edgeHold ? "border-gray-500" : "border-none"} overflow-hidden`}
                 style={{
                     width: screen.width > 500 ? menuComponent.width : screen.width - 12 * 2

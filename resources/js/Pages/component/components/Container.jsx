@@ -8,10 +8,7 @@ import Player from "./Player/Player";
 import MenuVertical from "./MenuVertical";
 
 export default function Container({ Element, ...props }) {
-    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, artistId, setARTIST, setCurrentMenu } = useContext(Context);
-
-    useEffect(() => {
-    }, [menuComponent.edgeHold])
+    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, artistId, setARTIST, setCurrentMenu, albumId, setALBUM } = useContext(Context);
 
     useEffect(() => {
         localStorage.setItem("menu-width", menuComponent.width)
@@ -53,10 +50,40 @@ export default function Container({ Element, ...props }) {
                     musics: response.data.musics,
                 });
                 setCurrentMenu("8");
-                history.pushState({}, "", `artist/${artist_id}`)
+                history.pushState({}, "", `/artist/${artist_id}`)
             }
 
             console.log("Done")
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const loadAlbum = async (album_id) => {
+        // if (props?.props?.artist) return;
+        if (!album_id) return;
+        try {
+            const response = await axios.get(route('album-only', { album_id: album_id }), {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.data.success) {
+                console.log(response.data)
+                setALBUM({
+                    artist: response.data.artist[0],
+                    album: response.data.album[0],
+                    musics: response.data.musics,
+                });
+                console.log("Data: ", response.data)
+                setCurrentMenu("9");
+                // history.pushState({}, "", `album/${album_id}`)
+            }
+
+            console.log("Done")
+            history.pushState({}, "", `/album/${album_id}`)
         } catch (e) {
             console.error(e);
         }
@@ -116,11 +143,11 @@ export default function Container({ Element, ...props }) {
 
     useEffect(() => {
         loadArtist(artistId)
-    }, [artistId])
+    }, [artistId]);
 
     useEffect(() => {
-        console.log(ARTIST);
-    }, [ARTIST])
+        loadAlbum(albumId)
+    }, [albumId]);
 
 
     return (

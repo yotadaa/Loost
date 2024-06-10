@@ -10,7 +10,7 @@ import { useCustomBackButton } from "../CustomBackward";
 
 export default function ArtistPage({ props }) {
 
-    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen } = useContext(Context);
+    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId } = useContext(Context);
     const [active, setActive] = useState(0);
 
 
@@ -159,7 +159,7 @@ export default function ArtistPage({ props }) {
                                             <div className="truncate max-w-[200px] hover:underline"
                                                 onClick={() => {
                                                     setCurrentMenu("9");
-                                                    history.pushState(null, "", "/album/" + o.id_album);
+                                                    setAlbumId(o?.id_album);
                                                 }}
                                             >{o?.nama}</div>
                                             <div className="text-xs text-gray-500 truncate max-w-[200px]">{ARTIST?.artist.nama}</div>

@@ -21,16 +21,19 @@ import AlbumPage from "./component/components/albums/AlbumPage";
 const Children = ({ menu }) => {
     return (
         <div className="flex flex-col items-center justify-center h-dvh gap-2 w-screen">
-            {Object.keys(menu).map((m, i) =>
-                <div
-                    key={i}
-                    className="bg-gray-200 py-2 px-2 rounded-md shadow-md hover:bg-gray-300 cursor-pointer flex  max-w-[400px] w-full gap-2"
-                    onClick={() => {
-                        Inertia.get(route(menu[m].route));
-                    }}
-                >
-                    {menu[m].name}
-                </div>
+            {Object.keys(menu).map((m, i) => {
+                return (
+                    <div
+                        key={i}
+                        className="bg-gray-200 py-2 px-2 rounded-md shadow-md hover:bg-gray-300 cursor-pointer flex  max-w-[400px] w-full gap-2"
+                        onClick={() => {
+                            Inertia.get(route(menu[m].route));
+                        }}
+                    >
+                        {menu[m].name}
+                    </div>
+                )
+            }
             )}
         </div>
     )
@@ -104,12 +107,19 @@ function App({ props }) {
 
     //ARTIST
     const [ARTIST, setARTIST] = useState(null);
-    const [ALBUMS, setALBUM] = useState(null);
+    const [ALBUM, setALBUM] = useState(null);
     const [artistId, setArtistId] = useState(null);
+    const [albumId, setAlbumId] = useState(null);
 
     //URL
     const URI = new URL(location);
     const [SONG, setSONG] = useState(Song(null));
+
+    function getImageFilename(foto) {
+        if (!foto) return null;
+        const parts = foto.split('/');
+        return parts[parts.length - 1];
+    }
 
     const loadPlayedSong = async () => {
         const song_id = localStorage.getItem("current") || null;
@@ -130,7 +140,7 @@ function App({ props }) {
 
             if (response.data.success) {
                 setSONG(prevState => ({ ...prevState, current: response.data.song[0] }));
-                loadAudio(response.data.song[0].source)
+                loadAudio(response.data.song[0]?.source)
             } else {
                 console.log("Failed to load the song, success flag is false.");
             }
@@ -164,7 +174,23 @@ function App({ props }) {
         audioRef.current.play();
     }
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUMS, setALBUM };
+    function formatSeconds(seconds) {
+        // Handle negative or non-numeric inputs (optional)
+        if (seconds < 0 || typeof seconds !== 'number') {
+            return 'Invalid input';
+        }
+
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        // Ensure two-digit format for minutes and seconds
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+        return `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId };
     return (
         <Context.Provider value={contextValue}>
             {currentMenu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[currentMenu]?.child || "div"} />}

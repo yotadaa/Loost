@@ -67,7 +67,7 @@ const PrettoSlider = styled(Slider)(({ theme }) => ({
 
 export default function Player({ }) {
 
-    const { menuComponent, screen, audioRef, SONG, setAUDIO, AUDIO } = useContext(Context);
+    const { menuComponent, screen, audioRef, SONG, setAUDIO, AUDIO, setArtistId } = useContext(Context);
     const [playerProperties, setPlayerProperties] = useState({
         width: window.innerWidth - (menuComponent.width + 30),
     })
@@ -196,8 +196,12 @@ export default function Player({ }) {
                         </div>
                     </div>
                     <div className="flex flex-col px-1 overflow-hidden">
-                        <p className="text-base font-semibold whitespace-nowrap text-nowrap text-ellipsis">{SONG.current?.judul || "Song title"}</p>
-                        <p className="text-xs font-semibold">{SONG.current?.artist_names || "Song artists"}</p>
+                        <p className="text-base hover:underline cursor-pointer font-semibold whitespace-nowrap text-nowrap text-ellipsis">{SONG.current?.judul || "Song title"}</p>
+                        <p className="text-xs font-semibold hover:underline cursor-pointer"
+                            onClick={() => {
+                                setArtistId(SONG.current?.id_artist);
+                            }}
+                        >{SONG.current?.artist_names || "Song artists"}</p>
                     </div>
                 </div>
                 <PlayerController />

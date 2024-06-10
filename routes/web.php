@@ -39,3 +39,4 @@ Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("
 
 
 Route::get('/album/{album_id}', [MenuController::class, 'AlbumPage'])->name("album-page");
+Route::get('/album-only/{album_id}', [ListenerController::class, 'AlbumGet'])->name("album-only");

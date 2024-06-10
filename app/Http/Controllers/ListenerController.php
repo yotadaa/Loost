@@ -190,6 +190,62 @@ class ListenerController extends Controller
                 "success" => true,
             ]);
         }
+    }
 
+    public function AlbumGet(Request $request, $album_id) {
+        try {
+            $album = DB::table("albums")
+                        ->where("id_album", $album_id)
+                        ->get();
+
+            $artist = DB::table("artists")
+                        ->select(
+                            "artists.*"
+                        )
+                        ->join("albums", "albums.id_artist","=", "artists.id_penyanyi")
+                        ->where('albums.id_album', $album_id)
+                        ->get();
+
+
+            $songs =DB::table('musics')
+                    ->select(
+                        'musics.id_musik',
+                        'musics.judul',
+                        'musics.artwork',
+                        'musics.duration',
+                        'musics.single',
+                        'albums.foto',
+                        'musics.source',
+                        'albums.id_album',
+                        DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
+                    )
+                    ->join('albums', 'musics.id_album', '=', 'albums.id_album')
+                    ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+                    ->where('musics.id_album', $album_id)
+                    ->groupBy(
+                        'musics.id_musik',
+                        'musics.judul',
+                        'albums.foto',
+                        'musics.artwork',
+                        'musics.single',
+                        'musics.duration',
+                        'albums.id_album',
+                        'musics.source',
+                    )
+                    ->get();
+
+            return response()->json([
+                    "success" => true,
+                    "album" => $album,
+                    "musics" => $songs,
+                    "artist" => $artist
+                ]
+            );
+        } catch (e)  {
+            return response()->json([
+                "success" => false,
+                "message" => e
+            ]);
+        }
     }
 }
