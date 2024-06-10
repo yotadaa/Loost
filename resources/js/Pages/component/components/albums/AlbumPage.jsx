@@ -12,15 +12,15 @@ export default function AlbumPage({ props }) {
     const [imageUrl, setImageUrl] = useState(filename ? route("get-image", { category: "albums", filename }) : '');
     useEffect(() => {
         if (ALBUM) setALBUM(ALBUM ? ALBUM : {
-            artist: props.props.artist[0],
+            artist: props?.props?.artist[0],
             album: props?.props?.album[0],
-            musics: Object.keys(props.props.musics).map(o => props.props.musics[o]),
+            musics: Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]),
         })
         else {
             setALBUM(ALBUM ? ALBUM : {
-                artist: props.props.artist[0],
+                artist: props?.props?.artist[0],
                 album: props?.props?.album[0],
-                musics: Object.keys(props.props.musics).map(o => props.props.musics[o]),
+                musics: Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]),
             })
         }
     }, []);

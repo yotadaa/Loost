@@ -97,22 +97,18 @@ export default function Container({ Element, ...props }) {
             const audioURL = route("stream-audio", { filename: filename });
             audioRef.current.src = audioURL;
 
-            try {
-                const formData = new FormData();
-                formData.append("id_musik", SONG?.current?.id_musik);
+            const formData = new FormData();
+            formData.append("id_musik", SONG?.current?.id_musik);
 
-                const response = await axios.post(route('listen-to-music'), formData, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+            const response = await axios.post(route('listen-to-music'), formData, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                if (response.data.success) {
-                    setAUDIO(p => ({ ...p, loading: false }))
-                }
-            } catch (e) {
-                console.error('Error tracking music play:', e);
+            if (response.data.success) {
+                setAUDIO(p => ({ ...p, loading: false }))
             }
             audioRef.currentTime = AUDIO.currentTime || 0;
             if (!AUDIO.init) {
