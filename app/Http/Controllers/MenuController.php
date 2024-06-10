@@ -10,7 +10,8 @@ use Inertia\Inertia;
 class MenuController extends Controller
 {
     //
-    public function Home() {
+    public function Home()
+    {
 
         $startOfWeek = Carbon::now()->startOfMonth();
         $endOfWeek = Carbon::now()->endOfMonth();
@@ -31,7 +32,7 @@ class MenuController extends Controller
             ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
             ->join('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
             ->whereBetween('music_listener.created_at', [$startOfWeek, $endOfWeek])
-            ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork',)
+            ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto', 'musics.source', 'musics.artwork', )
             ->orderBy('total_views', 'DESC')
             ->limit(20)
             ->get();
@@ -45,7 +46,8 @@ class MenuController extends Controller
         ]);
     }
 
-    public function ArtistPage(Request $request, $artist_id) {
+    public function ArtistPage(Request $request, $artist_id)
+    {
         // Fetch the artist by ID
         $artist = DB::table("artists")->where("id_penyanyi", $artist_id)->get();
 
@@ -66,15 +68,22 @@ class MenuController extends Controller
                     'musics.duration',
                     'musics.single',
                     'albums.foto',
+                    'albums.id_album',
                     DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
                 )
                 ->join('albums', 'musics.id_album', '=', 'albums.id_album')
                 ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
                 ->where('musics.id_album', $album->id_album)
-                ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork',
+                ->groupBy(
+                    'musics.id_musik',
+                    'musics.judul',
+                    'albums.foto',
+                    'musics.source',
+                    'musics.artwork',
                     'musics.single',
-                'musics.duration',)
-                ->orderBy('total_views', 'DESC')
+                    'musics.duration',
+                    'albums.id_album',
+                )
                 ->get();
 
             // Merge the album songs into the songs collection
@@ -93,13 +102,14 @@ class MenuController extends Controller
             ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
             ->join('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
             ->where('penyanyi_musik.id_penyanyi', $artist_id)
-            ->where("musics.single",'T')    
-            ->groupBy('musics.id_musik', 'musics.judul','musics.source','musics.artwork','musics.duration','musics.single',)
+            ->where("musics.single", 'T')
+            ->groupBy('musics.id_musik', 'musics.judul', 'musics.source', 'musics.artwork', 'musics.duration', 'musics.single', )
             ->orderBy('total_views', 'DESC')
             ->get();
 
         // Merge the album songs into the songs collection
         $songs = $songs->merge($singleSongs);
+        $songs = $songs->sortByDesc('total_views');
 
         // Convert the songs collection to an array if needed
         $finalSongsArray = $songs->toArray();
@@ -111,6 +121,20 @@ class MenuController extends Controller
                 "artist" => $artist,
                 "albums" => $albums,  // Pass $albums instead of $album
                 "musics" => $finalSongsArray,
+            ]
+        ]);
+    }
+
+    public function AlbumPage(Request $request, $album_id) {
+
+        $album = DB::table("albums")
+                    ->where("id_album", $album_id)
+                    ->get();
+
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 9,
+                "album" => $album,
             ]
         ]);
     }

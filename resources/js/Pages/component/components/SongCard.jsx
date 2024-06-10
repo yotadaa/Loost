@@ -15,17 +15,14 @@ export default function SongCard({
     o, hover, setHover, index
 }) {
 
-    const { screen, setSONG, mainComponent, setAUDIO, audioRef, setArtistId } = useContext(Context);
+    const { screen, setSONG, mainComponent, setAUDIO, audioRef, setArtistId, handleChangeMusic } = useContext(Context);
 
     return (
-        <div className="relative shadow-md   overflow-hidden cursor-pointer rounded-md "
+        <div className="relative shadow-md w-fit  overflow-hidden cursor-pointer rounded-md "
             style={{
-                // height: screen.width / 4,
-                width: mainComponent.width / 4,
-                maxWidth: 180,
-                maxHeight: 180,
-                minWidth: 120,
-                minHeight: 120
+                minWidth: mainComponent.width / 6 < 120 ? 120 : mainComponent.width / 6 > 180 ? 180 : mainComponent.width / 6,
+                minHeight: mainComponent.width / 6 < 120 ? 120 : mainComponent.width / 6 > 180 ? 180 : mainComponent.width / 6,
+
             }}
             onMouseEnter={() => {
                 setHover(p => ({
@@ -47,6 +44,8 @@ export default function SongCard({
                 src={`storage/` + o?.foto}
                 alt={`popular-${index}`}
                 draggable={false}
+                style={{
+                }}
             />
             <div className={`absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-t from-black via-black/50 via-10% to-transparent rounded-md transition-all duration-300 ease-in-out  ${hover.tren === index ? "pb-20" : "pb-10"}`}>
                 <div className={`absolute bottom-0 left-0 right-0 p-2 text-white transition-all duration-300 ease-in-out  ${hover.tren === index ? "pb-10" : "pb-3"}`}>
@@ -62,12 +61,13 @@ export default function SongCard({
             <div
                 className={`w-[50px] h-[50px] rounded-full shadow-xl  right-2 absolute bg-gray-50 transition-all duration-300 ease-in-out  ${hover.tren === index ? "bottom-2" : "-bottom-16"} hover:bg-gray-300 flex items-center justify-center`}
                 onClick={() => {
-                    setSONG(p => ({ ...p, current: o }));
-                    localStorage.setItem("current-time", 0);
-                    setAUDIO(p => ({
-                        ...p, playing: true, init: false, currentTime: 0
-                    }));
-                    audioRef.current.play();
+                    // setSONG(p => ({ ...p, current: o }));
+                    // localStorage.setItem("current-time", 0);
+                    // setAUDIO(p => ({
+                    //     ...p, playing: true, init: false, currentTime: 0
+                    // }));
+                    // audioRef.current.play();
+                    handleChangeMusic(o);
 
                 }}
             >

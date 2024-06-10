@@ -10,7 +10,7 @@ import { useCustomBackButton } from "../CustomBackward";
 
 export default function ArtistPage({ props }) {
 
-    const { ARTIST, setARTIST, setSONG, SONG, audioRef, setAUDIO, AUDIO } = useContext(Context);
+    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen } = useContext(Context);
     const [active, setActive] = useState(0);
 
 
@@ -35,20 +35,12 @@ export default function ArtistPage({ props }) {
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    const handleChangeMusic = (o) => {
-        setSONG(p => ({ ...p, current: o }));
-        localStorage.setItem("current-time", 0);
-        setAUDIO(p => ({
-            ...p, playing: true, init: false, currentTime: 0
-        }));
-        audioRef.current.play();
-    }
 
     useEffect(() => {
         setARTIST(ARTIST ? ARTIST : {
             artist: props.props.artist[0],
             albums: props.props.albums,
-            musics: props.props.musics,
+            musics: Object.keys(props.props.musics).map(o => props.props.musics[o]),
 
         })
     }, [])
@@ -59,8 +51,15 @@ export default function ArtistPage({ props }) {
     })
 
     return (
-        <div className="h-full flex flex-col gap-10 w-full p-3 overflow-x-hidden custom-scrollbar">
-            <div className="w-full h-full">
+        <div className="h-full flex flex-col gap-10 w-full p-3 overflow-x-hidden custom-scrollbar"
+            style={{
+                minHeight: screen.height - 70,
+            }}
+        >
+            <div className="w-full h-full"
+                style={{
+                }}
+            >
                 <ArtistProfile
                     props={props}
                     ARTIST={ARTIST?.artist}
@@ -89,7 +88,7 @@ export default function ArtistPage({ props }) {
                             display: active === 0 ? "block" : "none"
                         }}
                     >
-                        {ARTIST?.musics.slice(0, 10).map((o, i) => {
+                        {ARTIST?.musics?.slice(0, 10).map((o, i) => {
                             const filename = getImageFilename(o.single === "T" ? o?.artwork : o?.foto);
                             const imageUrl = filename ? route("get-image", { category: o.single === "T" ? "single" : "albums", filename }) : ''
                             return (
@@ -157,7 +156,12 @@ export default function ArtistPage({ props }) {
                                             </div>
                                         </div>
                                         <div className="flex font-semibold flex-col">
-                                            <div className="truncate max-w-[200px] hover:underline">{o?.nama}</div>
+                                            <div className="truncate max-w-[200px] hover:underline"
+                                                onClick={() => {
+                                                    setCurrentMenu("9");
+                                                    history.pushState(null, "", "/album/" + o.id_album);
+                                                }}
+                                            >{o?.nama}</div>
                                             <div className="text-xs text-gray-500 truncate max-w-[200px]">{ARTIST?.artist.nama}</div>
                                         </div>
                                     </div>
@@ -165,7 +169,12 @@ export default function ArtistPage({ props }) {
                                     <div className="relative flex w-full justify-around"
                                     >
                                         <div className="text-sm text-gray-700">
-                                            {ARTIST?.albums?.length} lagu
+                                            {ARTIST?.musics?.reduce((count, currentValue) => {
+                                                if (currentValue.id_album === o.id_album) {
+                                                    return count + 1;
+                                                }
+                                                return count;
+                                            }, 0)} lagu
                                         </div>
                                     </div>
                                 </div>

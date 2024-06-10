@@ -15,7 +15,7 @@ export default function TrendNow({
     title
 }) {
 
-    const { setSONG, mainComponent, setArtistId } = useContext(Context);
+    const { setSONG, mainComponent, setArtistId, setAUDIO, audioRef, handleChangeMusic } = useContext(Context);
     const scrollContainerRef = useRef(null);
     const [hover, setHover] = useState({
         tren: null,
@@ -47,18 +47,14 @@ export default function TrendNow({
                                     <div className="grid-item border-t-[1px] gap-10 border-gray-300 w-full" key={i}>
                                         <div className='flex gap-[13px] justify-between w-full'>
                                             <div className='flex gap-[13px]'>
-                                                <div className='relative flex items-center justify-center'>
+                                                <div className='relative flex w-fit items-center justify-center'>
                                                     <img
                                                         src={o.singe === "Y" ? "storage/" + o.artwork : "storage/" + o.foto}
-                                                        width={40}
-                                                        className="rounded-sm cursor-pointer hover:contrast-[30%]"
+                                                        className="rounded-sm min-w-[40px] min-h-[40px] object-cover cursor-pointer hover:contrast-[30%]"
                                                     />
                                                     <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
                                                         onClick={() => {
-                                                            setSONG(p => ({
-                                                                ...p,
-                                                                current: o,
-                                                            }))
+                                                            handleChangeMusic(o)
                                                         }}
                                                     ><PlayArrowIcon className='text-gray-50' /></div>
                                                 </div>

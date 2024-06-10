@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import Context from "../provider/context";
 
 
 export function Song(s) {
@@ -9,5 +11,8 @@ export function Song(s) {
 
     return song;
 }
+
+
+
 
 

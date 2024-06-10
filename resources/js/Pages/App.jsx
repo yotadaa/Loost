@@ -16,6 +16,7 @@ import axios from "axios";
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import ArtistPage from "./component/components/artists/ArtistPage";
+import AlbumPage from "./component/components/albums/AlbumPage";
 
 const Children = ({ menu }) => {
     return (
@@ -44,7 +45,8 @@ function App({ props }) {
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false },
         "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false },
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
-        "8": { element: Container, name: "Artist Page", route: "artist_page", child: ArtistPage, icon: SearchIcon, show: true },
+        "8": { element: Container, name: "Cari lagu", route: "home", child: ArtistPage, icon: SearchIcon, show: true },
+        "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false },
     })
 
     const [currentMenu, setCurrentMenu] = useState(props.menu);
@@ -102,6 +104,7 @@ function App({ props }) {
 
     //ARTIST
     const [ARTIST, setARTIST] = useState(null);
+    const [ALBUMS, setALBUM] = useState(null);
     const [artistId, setArtistId] = useState(null);
 
     //URL
@@ -148,9 +151,20 @@ function App({ props }) {
         playing: false,
         muted: false,
         init: true,
+        loading: false,
     });
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu };
+    function handleChangeMusic(o) {
+
+        setSONG(p => ({ ...p, current: o }));
+        localStorage.setItem("current-time", 0);
+        setAUDIO(p => ({
+            ...p, playing: true, init: false, currentTime: 0
+        }));
+        audioRef.current.play();
+    }
+
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUMS, setALBUM };
     return (
         <Context.Provider value={contextValue}>
             {currentMenu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[currentMenu]?.child || "div"} />}

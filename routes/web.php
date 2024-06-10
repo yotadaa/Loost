@@ -35,3 +35,7 @@ Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("
 Route::get('/artist-only/{artist_id}', [ListenerController::class, 'ArtistGet'])->name("artist-only");
 Route::get('/image/{category}/{filename}',[AudioStreamController::class, 'getImage'])->name("get-image");
 Route::get('/dashboard-only', [ListenerController::class, 'DashboardOnly'])->name("dashboard-only");
+Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
+
+
+Route::get('/album/{album_id}', [MenuController::class, 'AlbumPage'])->name("album-page");

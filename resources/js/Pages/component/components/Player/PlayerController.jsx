@@ -9,6 +9,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LyricsIcon from '@mui/icons-material/Lyrics';
 import { Tooltip } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function PlayerController() {
 
@@ -73,11 +74,15 @@ export default function PlayerController() {
                     <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "></div>
                 </div>
                 <div className="relative flex items-center justify-center">
-
                     {AUDIO.playing ? <PauseIcon className="scale-[1.1]" /> : <PlayArrowIcon className="scale-[1.1]" />}
                     <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "
                         onClick={() => setAUDIO(p => ({ ...p, playing: !p.playing }))}
-                    ></div>
+                    >
+
+                    </div>
+                    <div className="w-[24px] h-[24px] -top-2 -left-2 absolute pointer-events-none text-gray-600"
+                        style={{ opacity: AUDIO.loading ? 1 : 0 }}
+                    ><CircularProgress sx={{ color: 'black' }} /></div>
                 </div>
                 <div className="relative flex items-center justify-center">
                     <SkipNextIcon className="scale-[1.1]" />

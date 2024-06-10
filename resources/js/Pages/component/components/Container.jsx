@@ -36,7 +36,7 @@ export default function Container({ Element, ...props }) {
 
     const loadArtist = async (artist_id) => {
         // if (props?.props?.artist) return;
-        console.log("Accessing artist: ", artist_id)
+        if (!artist_id) return;
         try {
             const response = await axios.get(route('artist-only', { artist_id: artist_id }), {
                 withCredentials: true,
@@ -63,7 +63,7 @@ export default function Container({ Element, ...props }) {
     }
 
     const loadAudio = async (src = "/undefined.mp3") => {
-
+        setAUDIO(p => ({ ...p, loading: true }))
         try {
             const parts = src.split('/'); //path.split("/").[path.split("/").length-1]
             const filename = parts[parts.length - 1];
@@ -82,6 +82,7 @@ export default function Container({ Element, ...props }) {
                 });
 
                 if (response.data.success) {
+                    setAUDIO(p => ({ ...p, loading: false }))
                 }
             } catch (e) {
                 console.error('Error tracking music play:', e);
@@ -97,7 +98,9 @@ export default function Container({ Element, ...props }) {
             });
         } catch (error) {
             console.error('Error loading audio:', error);
+            setAUDIO(p => ({ ...p, loading: false }))
         }
+        setAUDIO(p => ({ ...p, loading: false }))
     };
     useEffect(() => {
         if (SONG.current?.id_musik) {

@@ -7,7 +7,7 @@ export default function ArtistProfile({
 
 
 
-    const { screen } = useContext(Context);
+    const { screen, SONG } = useContext(Context);
     const [filename, setFilename] = useState(getImageFilename(props?.props?.artist ? props?.props?.artist[0]?.profil : ARTIST?.profil));
     const imageUrl = filename ? route("get-image", { category: "artists", filename: (filename || "src/undefined.jpg") }) : '';
     const [hover, setHover] = useState(false);
@@ -20,9 +20,13 @@ export default function ArtistProfile({
         }
     }, [someRef.current]);
 
+    useEffect(() => {
+        if (ARTIST) setFilename(getImageFilename(ARTIST?.profil));
+    }, [ARTIST])
+
 
     return (
-        <div className={` transition-all duration-300 h-[300px] ease-in-out relative w-full rounded-md overflow-hidden ${hover ? `h-full` : "h-[300px]"}`}
+        <div className={` transition-all duration-300 h-[300px] ease-in-out relative w-full rounded-md overflow-hidden ${hover ? `h-full` : "h-[300px]"} max-h-[700px]`}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >

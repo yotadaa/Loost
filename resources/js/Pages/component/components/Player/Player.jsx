@@ -71,6 +71,7 @@ export default function Player({ }) {
     const [playerProperties, setPlayerProperties] = useState({
         width: window.innerWidth - (menuComponent.width + 30),
     })
+    const [loading, setLoading] = useState(AUDIO.loading)
 
     function formatSeconds(seconds) {
         // Handle negative or non-numeric inputs (optional)
@@ -160,7 +161,7 @@ export default function Player({ }) {
                     <PrettoSlider
                         min={0}
                         max={audioRef?.current?.duration || 0}
-                        value={AUDIO.currentTime}
+                        value={parseFloat(AUDIO.currentTime)}
                         onChange={handleSeek}
                     />
                 </div>
@@ -168,14 +169,31 @@ export default function Player({ }) {
                     className="bg-gradient-to-l from-white via-white/50 via-20% to-gray-300 w-full flex items-center justify-start h-full px-1 gap-2 max-w-[300px] min-w-[100px] "
                 >
                     <div className="rounded-md bg-transparent relative w-[50px] h-[50px] min-w-[50px]">
-                        <Skeleton className="absolute rounded-md left-0 top-0" variant="rectangular" width={50} height={50} />
+
                         <img
                             src={imageUrl}
                             className="bg-red-500 w-full h-full min-w-[50px] rounded-md shadow-xl shadow-gray-500 "
                             style={{
-                                opacity: SONG.current?.foto || SONG.current?.artwork ? 1 : 0,
+                                opacity: (SONG.current?.foto || SONG.current?.artwork) && !AUDIO.loading ? 1 : 0,
+                            }}
+                            onLoad={() => {
+                                setAUDIO(p => ({ ...p, loading: false }))
                             }}
                         />
+                        <div
+                            className="absolute rounded-md left-0 top-0"
+                            style={{
+                                opacity: AUDIO.loading ? 1 : 0,
+                            }}
+                        >
+                            <Skeleton
+                                className="rounded-md"
+                                variant="rectangular"
+                                width={50}
+                                height={50}
+                                sx={{ bgcolor: 'grey.600' }}
+                            />
+                        </div>
                     </div>
                     <div className="flex flex-col px-1 overflow-hidden">
                         <p className="text-base font-semibold whitespace-nowrap text-nowrap text-ellipsis">{SONG.current?.judul || "Song title"}</p>

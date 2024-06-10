@@ -102,6 +102,7 @@ class ListenerController extends Controller
                         'musics.duration',
                         'musics.single',
                         'albums.foto',
+                        'albums.id_album',
                         DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views'),
                         DB::raw('GROUP_CONCAT(DISTINCT albums.id_artist ORDER BY albums.id_artist ASC SEPARATOR ", ") as id_artist')
                     )
@@ -109,7 +110,8 @@ class ListenerController extends Controller
                     ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
                     ->where('musics.id_album', $album->id_album)
                     ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork','musics.single',
-                    'musics.duration',)
+                    'musics.duration',
+                    'albums.id_album',)
                     ->orderBy('total_views', 'DESC')
                     ->get();
 
