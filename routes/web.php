@@ -31,12 +31,17 @@ Route::post('/listen-to-music', [ListenerController::class, 'listenSong'])->name
 Route::get('/home', [MenuController::class, 'Home'])->name('home');
 Route::get('/audio/{filename}', [AudioStreamController::class, 'streamAudio'])->name('stream-audio');
 Route::get('/song/{song_id}', [ListenerController::class, 'getCompleteSong'])->name("get-complete-song");
-Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
-Route::get('/artist-only/{artist_id}', [ListenerController::class, 'ArtistGet'])->name("artist-only");
 Route::get('/image/{category}/{filename}',[AudioStreamController::class, 'getImage'])->name("get-image");
+
 Route::get('/dashboard-only', [ListenerController::class, 'DashboardOnly'])->name("dashboard-only");
 Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
 
 
+Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
+Route::get('/artist-only/{artist_id}', [ListenerController::class, 'ArtistGet'])->name("artist-only");
+
 Route::get('/album/{album_id}', [MenuController::class, 'AlbumPage'])->name("album-page");
 Route::get('/album-only/{album_id}', [ListenerController::class, 'AlbumGet'])->name("album-only");
+
+Route::get('/music/{song_id}', [MenuController::class, 'SongPage'])->name("song-page");
+Route::get('/music-only/{song_id}', [ListenerController::class, 'SongGet'])->name("song-only");

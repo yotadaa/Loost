@@ -2,7 +2,7 @@
 
 
 export default function AlbumProfile({
-    ALBUM, imageUrl
+    ALBUM, imageUrl, setArtistId
 }) {
 
     return (
@@ -28,7 +28,9 @@ export default function AlbumProfile({
                         </div>
                         <div className="text-bottom text-3xl font-bold text-nowrap truncate ">
                             <div>{ALBUM?.album?.nama}</div>
-                            <div className="font-thin text-sm">{ALBUM?.artist.nama}</div>
+                            <div className="font-thin text-sm hover:underline cursor-pointer w-fit"
+                                onClick={() => setArtistId(ALBUM?.artist.id_penyanyi)}
+                            >{ALBUM?.artist?.nama}</div>
                         </div>
                     </div>
                 </div>

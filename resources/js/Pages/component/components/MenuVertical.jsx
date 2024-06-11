@@ -9,7 +9,7 @@ export default function MenuVertical({ }) {
     }).slice(6).filter(o => o.show));
     return (
         <div
-            className="h-[65px] w-full"
+            className="h-[65px] w-full pointer-events-auto"
         >
             <div
                 className="h-full w-full bg-black"

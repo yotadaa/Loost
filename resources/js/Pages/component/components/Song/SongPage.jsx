@@ -1,45 +1,56 @@
 import { useContext, useEffect, useState } from "react";
 import Context from "../../provider/context";
-import AlbumProfile from "./AlbumProfile";
+import SongProfile from "./SongProfile";
+import TrackList from "../TrackList";
+import axios from "axios";
+
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function AlbumPage({ props }) {
-    const { ALBUM, formatDate, formatSeconds, setALBUM, screen, getImageFilename, SONG, handleChangeMusic, setArtistId } = useContext(Context);
-    const [filename, setFilename] = useState(getImageFilename(ALBUM?.album?.foto));
+
+export default function SongPage({ props }) {
+    const { MUSIC, formatSeconds, setMUSIC, screen, getImageFilename, SONG, handleChangeMusic, setArtistId, AUDIO, audioRef, formatDate } = useContext(Context);
+    const [filename, setFilename] = useState(getImageFilename(MUSIC && MUSIC.single === "T" ? MUSIC?.artwork : MUSIC?.foto));
     const [imageUrl, setImageUrl] = useState(filename ? route("get-image", { category: "albums", filename }) : '');
-    useEffect(() => {
-        setArtistId(null);
-        if (ALBUM) setALBUM(ALBUM ? ALBUM : {
-            artist: props?.props?.artist ? props?.props?.artist[0] : null,
-            album: props?.props ? props?.props?.album[0] : null,
-            musics: Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]),
-        })
-        else {
-            setALBUM({
-                artist: props?.props.artist ? props?.props?.artist[0] : null,
-                album: props?.props.album ? props?.props?.album : null,
-                musics: props?.props.musics ? Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]) : null,
-            })
+    const [relatedSong, setRelatedSong] = useState([]);
+
+
+    async function loadRelatedSong(album_id) {
+        console.log(album_id)
+        if (!album_id) return;
+        const res = await axios.get(route("album-only", { album_id: album_id }))
+        if (res.data.success) {
+            setRelatedSong(res.data.musics)
         }
+    }
+
+    useEffect(() => {
+        if (MUSIC) setMUSIC(MUSIC ? MUSIC : props?.props.music ? props?.props?.music[0] : null,)
+        else {
+            setMUSIC(props?.props.music ? props?.props?.music[0] : null)
+        }
+
     }, []);
 
     useEffect(() => {
-        setFilename(getImageFilename(ALBUM?.album?.foto));
-        console.log(ALBUM)
-    }, [ALBUM]);
+        loadRelatedSong(MUSIC?.id_album);
+        setFilename(getImageFilename(MUSIC && MUSIC.single === "T" ? MUSIC?.artwork : MUSIC?.foto));
+    }, [MUSIC]);
 
     useEffect(() => {
-        setImageUrl(filename ? route("get-image", { category: "albums", filename }) : '');
+        setImageUrl(filename ? route("get-image", { category: MUSIC?.single === "T" ? "single" : "albums", filename }) : '');
     }, [filename]);
+
+    useEffect(() => {
+    }, [relatedSong])
 
     return (
         <div
-            className="w-full"
+            className="w-full h-full"
             style={{
-                height: screen.height - 0
+                maxHeight: screen.height - 0
             }}
         >
             <div className="relative w-full h-full">
@@ -52,25 +63,34 @@ export default function AlbumPage({ props }) {
                 <div className="fixed h-full inset-0 opacity-10  bg-gradient-to-t from-black via-black/0 to-transparent"></div>
                 <div className="fixed h-1/2 inset-0 bg-gradient-to-b from-black via-black/1 to-transparent"></div>
 
-                <div className="absolute w-full ">
-                    <AlbumProfile
+                <div className="absolute w-full custom-scrollbar overflow-y-scroll pb-[100px] "
+                    style={{
+                        maxHeight: screen.height
+                    }}>
+                    <SongProfile
                         setArtistId={setArtistId}
-                        ALBUM={ALBUM}
+                        MUSIC={MUSIC}
                         imageUrl={imageUrl}
+                        AUDIO={AUDIO}
+                        audioRef={audioRef}
+                        formatDate={formatDate}
+                        handleChangeMusic={handleChangeMusic}
                     />
-                    <div>
-                        <div className="p-4">
-                            <div className="text-gray-50 font-thin text-xl">{ALBUM?.musics?.length} lagu di album ini - rilis pada {formatDate(ALBUM?.album?.release_date)}</div>
+                    <div className="p-4 text-xl font-thin text-gray-50">
+                        <div>Album</div>
+                        <div className="flex justify-start items-center gap-5">
+                            <img src={imageUrl}
+                                className="rounded-md"
+                                width={60}
+                                height={60}
+                            />
+                            <div>{MUSIC?.nama}</div>
                         </div>
                     </div>
-                    <div className="w-full bg-gray-500 h-[50px] bg-opacity-20"></div>
-                    <div className="flex flex-col gap-3 p-4 w-full overflow-auto custom-scrollbar"
-                        style={{
-                            height: screen.height - 120 - 190
-                        }}
-                    >
-                        {ALBUM?.musics?.map((o, i) => {
-                            return (
+                    <div className="p-4 text-xl font-thin text-gray-50">
+                        <div>Lagu lain di album ini</div>
+                        {relatedSong?.map((o, i) => {
+                            if (o?.id_musik !== MUSIC?.id_musik) return (
                                 <div
                                     className="flex gap-2 items-center justify-between px-2 p-1 rounded-md hover:bg-gray-50 py-2 hover:bg-opacity-20 text-gray-50 w-full"
                                     key={i}
@@ -84,7 +104,7 @@ export default function AlbumPage({ props }) {
                                             />
                                             <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
                                                 onClick={() => {
-                                                    handleChangeMusic({ ...o, artist_names: ALBUM?.artist?.nama });
+                                                    handleChangeMusic({ ...o, artist_names: MUSIC?.artist_names });
                                                 }}
                                             >{SONG.current?.id_musik === o?.id_musik ? <PauseIcon /> : <PlayArrowIcon className='text-gray-50' />}
 
@@ -92,8 +112,8 @@ export default function AlbumPage({ props }) {
                                         <div className="flex font-thin text-lg flex-col">
                                             <div className="truncate max-w-[200px]">{o.judul}</div>
                                             <div className="text-xs text-gray-50 hover:underline cursor-pointer truncate max-w-[200px] w-fit"
-                                                onClick={() => setArtistId(ALBUM?.artist.id_penyanyi)}
-                                            >{ALBUM?.artist?.nama}</div>
+                                                onClick={() => setArtistId(MUSIC?.id_penyanyi)}
+                                            >{MUSIC?.artist_names}</div>
                                         </div>
                                     </div>
 
@@ -119,6 +139,6 @@ export default function AlbumPage({ props }) {
                     </div>
                 </div>
             </div>
-        </div >
-    );
+        </div>
+    )
 }

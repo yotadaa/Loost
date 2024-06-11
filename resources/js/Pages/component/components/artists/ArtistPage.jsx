@@ -5,12 +5,14 @@ import ArtistProfile from "./ArtistProfile";
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useCustomBackButton } from "../CustomBackward";
+import TrackList from "../TrackList";
 
 
 export default function ArtistPage({ props }) {
 
-    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId } = useContext(Context);
+    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId, setArtistId } = useContext(Context);
     const [active, setActive] = useState(0);
 
 
@@ -45,10 +47,13 @@ export default function ArtistPage({ props }) {
         })
     }, [])
 
+
     useCustomBackButton(() => {
         // window.history.pushState(null, '', "/home");
         console.log("Backward")
     })
+
+    console.log(ARTIST)
 
     return (
         <div className="h-full flex flex-col gap-10 w-full p-3 overflow-x-hidden custom-scrollbar"
@@ -65,7 +70,11 @@ export default function ArtistPage({ props }) {
                     ARTIST={ARTIST?.artist}
                     getImageFilename={getImageFilename}
                 />
-                <div className="flex flex-col">
+                <div className="flex flex-col"
+                    style={{
+                        paddingBottom: 70
+                    }}
+                >
                     <div className="flex font-bold text-xl gap-3 p-2 py-4">
                         <div className={`cursor-pointer ${active === 0 ? "text-gray-700" : "text-gray-400 hover:text-gray-500"}`}
                             onClick={() => {
@@ -83,53 +92,18 @@ export default function ArtistPage({ props }) {
                             }}
                         >Single</div>
                     </div>
-                    <div id="populer"
-                        style={{
-                            display: active === 0 ? "block" : "none"
-                        }}
-                    >
-                        {ARTIST?.musics?.slice(0, 10).map((o, i) => {
-                            const filename = getImageFilename(o.single === "T" ? o?.artwork : o?.foto);
-                            const imageUrl = filename ? route("get-image", { category: o.single === "T" ? "single" : "albums", filename }) : ''
-                            return (
-                                <div
-                                    className="flex gap-2 items-center justify-between pr-3 p-1 rounded-md hover:bg-gray-100 py-2"
-                                    key={i}
-                                >
-                                    <div className="flex gap-3 items-center max-w-[300px] w-full whitespace-nowrap overflow-hidden">
-
-                                        <div className="relative flex items-center shadow-md justify-center">
-                                            <img
-                                                src={imageUrl}
-                                                className="w-10 h-10 rounded-md shadow-md object-cover min-w-10"
-                                            />
-                                            <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
-                                                onClick={() => {
-                                                    handleChangeMusic(o);
-                                                }}
-                                            >{SONG.current?.id_musik === o?.id_musik ? <PauseIcon /> : <PlayArrowIcon className='text-gray-50' />}
-
-                                            </div></div>
-                                        <div className="flex font-semibold flex-col">
-                                            <div className="truncate max-w-[200px]">{o.judul}</div>
-                                            <div className="text-xs text-gray-500 truncate max-w-[200px]">{ARTIST?.artist.nama}</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="relative flex w-full justify-around"
-                                    >
-                                        <div className="text-sm text-gray-700">
-                                            {o.total_views}
-                                        </div>
-                                        <div>
-                                            {formatSeconds(parseInt(o.duration))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-
+                    <TrackList
+                        ARTIST={ARTIST}
+                        LIST={ARTIST?.musics}
+                        active={active}
+                        handleChangeMusic={handleChangeMusic}
+                        SONG={SONG}
+                        setArtistId={setArtistId}
+                        formatSeconds={formatSeconds}
+                        getImageFilename={getImageFilename}
+                        id="popular"
+                        display={0}
+                    />
                     <div id="album"
                         style={{
                             display: active === 1 ? "block" : "none"
@@ -181,52 +155,20 @@ export default function ArtistPage({ props }) {
                             )
                         })}
                     </div>
-                    <div id="single"
-                        style={{
-                            display: active === 2 ? "block" : "none"
-                        }}
-                    >
-                        {ARTIST?.musics.map((o, i) => {
-                            const filename = getImageFilename(o.single === "T" ? o?.artwork : o?.foto);
-                            const imageUrl = filename ? route("get-image", { category: "single", filename }) : ''
-                            if (o.single === "T") return (
-                                <div
-                                    className="flex gap-2 items-center justify-between pr-3 p-1 rounded-md hover:bg-gray-100 py-2"
-                                    key={i}
-                                >
-                                    <div className="flex gap-3 items-center max-w-[300px] w-full whitespace-nowrap overflow-hidden">
+                    <TrackList
+                        ARTIST={ARTIST}
+                        LIST={ARTIST?.musics.map(o => o?.single === "T")}
+                        active={active}
+                        handleChangeMusic={handleChangeMusic}
+                        SONG={SONG}
+                        setArtistId={setArtistId}
+                        formatSeconds={formatSeconds}
+                        getImageFilename={getImageFilename}
+                        id="single"
+                        display={2}
+                    />
 
-                                        <div className="relative flex items-center shadow-md justify-center">
-                                            <img
-                                                src={imageUrl}
-                                                className="w-10 h-10 rounded-md shadow-md object-cover min-w-10"
-                                            />
-                                            <div className='w-[40px] h-[40px] rounded-md hover:bg-black hover:bg-opacity-30 absolute flex items-center justify-center hover:opacity-100 opacity-0 cursor-pointer'
-                                                onClick={() => {
-                                                    handleChangeMusic(o);
-                                                }}
-                                            >{SONG.current?.id_musik === o?.id_musik ? <PauseIcon /> : <PlayArrowIcon className='text-gray-50' />}
 
-                                            </div></div>
-                                        <div className="flex font-semibold flex-col">
-                                            <div className="truncate max-w-[200px]">{o.judul}</div>
-                                            <div className="text-xs text-gray-500 truncate max-w-[200px]">{ARTIST?.artist.nama}</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="relative flex w-full justify-around"
-                                    >
-                                        <div className="text-sm text-gray-700">
-                                            {o.total_views}
-                                        </div>
-                                        <div>
-                                            {formatSeconds(parseInt(o.duration))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
                 </div>
             </div>
         </div>

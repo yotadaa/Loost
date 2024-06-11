@@ -11,12 +11,16 @@ export default function Menu({ props }) {
     }).slice(6).filter(o => o.show));
 
     return (
-        <div className={`bg-black relative ${screen.width > 500 ? "h-full p-3" : "h-full w-full"} bg-transparent z-[10000]`}>
-            <div className={`bg-gray-200 relative  ${screen.width > 500 ? "min-w-[70px] w-[200px] max-w-[500px] h-full" : "rounded-none min-w-full h-full"} relative border-[1px] border-black shadow-xl rounded-xl  select-none border-r-[2px] ${menuComponent.edgeHover || menuComponent.edgeHold ? "border-gray-500" : "border-none"} overflow-hidden`}
+        <div className={`bg-transparent relative ${screen.width > 500 ? "h-full p-3" : "h-full w-full"} bg-transparent z-[10000]`}>
+            <div className={`bg-transparent relative  ${screen.width > 500 ? "min-w-[70px] w-[200px] max-w-[500px] h-full" : "rounded-none min-w-full h-full"} relative border-[1px] border-black shadow-xl rounded-xl  select-none border-r-[2px] ${menuComponent.edgeHover || menuComponent.edgeHold ? "border-gray-500" : "border-none"} overflow-hidden `}
                 style={{
                     width: screen.width > 500 ? menuComponent.width : screen.width - 12 * 2
                 }}
             >
+
+                <div className="absolute w-full h-full bg-gray-200 opacity-80  z-[-1]">
+
+                </div>
                 <div className="flex flex-col justify-start items-start  overflow-hidden z-[100]"
                     style={{
                         width: menuComponent.width - 10
@@ -25,7 +29,7 @@ export default function Menu({ props }) {
                     {MENU.map((o, i) => (
                         <div
                             key={i}
-                            className={`p-3 bg-gray-200 transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-gray-300 hover:via-gray-300/50 hover:via-20% hover:to-transparent cursor-pointer font-bold flex items-center gap-4 `}
+                            className={`p-3 bg-gray-200 bg-opacity-0 transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-gray-300 hover:via-gray-300/50 hover:via-20% hover:to-transparent cursor-pointer font-bold flex items-center gap-4 `}
                             style={{
                                 width: menuComponent.width - 10
                             }}

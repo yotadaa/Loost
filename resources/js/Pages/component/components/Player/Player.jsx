@@ -149,7 +149,7 @@ export default function Player({ }) {
     }, [AUDIO.currentTime])
 
     return (
-        <div className={`${screen.width > 500 ? "h-[80px]" : "h-[70px]"} w-full py-1 px-1`}>
+        <div className={`${screen.width > 500 ? "h-[80px]" : "h-[70px]"} w-full py-1 px-1 pointer-events-auto`}>
             <audio ref={audioRef}
                 onTimeUpdate={handleTimeUpdate}
 

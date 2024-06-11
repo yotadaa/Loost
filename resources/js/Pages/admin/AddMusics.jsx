@@ -172,6 +172,7 @@ export default function AddMusics({ props }) {
                 alert("Terjadi kesalahan");
                 console.log(response.data);
             }
+            alert("Berhasil upload");
         } catch (e) {
             console.error(e);
         } finally {

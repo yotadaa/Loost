@@ -39,6 +39,7 @@ class MenuController extends Controller
 
         return Inertia::render('App', [
             "props" => [
+                "login" => auth()->check(),
                 "menu" => 7,
                 "populer_now" => $populer_now,
                 "artists" => DB::table("artists")->get(),
@@ -108,11 +109,11 @@ class MenuController extends Controller
             ->get();
 
         // Merge the album songs into the songs collection
-        $songs = $songs->merge($singleSongs);
-        $songs = $songs->sortByDesc('total_views');
-
-        // Convert the songs collection to an array if needed
-        $finalSongsArray = $songs->toArray();
+        $songsArray = $songs->toArray();
+        usort($songsArray, function($a, $b) {
+            return $b->total_views <=> $a->total_views;
+        });
+        $songs = collect($songsArray);
 
         // Return the artist, albums, and songs to the view
         return Inertia::render('App', [
@@ -120,7 +121,7 @@ class MenuController extends Controller
                 "menu" => 8,
                 "artist" => $artist,
                 "albums" => $albums,  // Pass $albums instead of $album
-                "musics" => $finalSongsArray,
+                "musics" => $songs,
             ]
         ]);
     }
@@ -150,6 +151,7 @@ class MenuController extends Controller
                     'albums.foto',
                     'musics.source',
                     'albums.id_album',
+                    'albums.release_date',
                     DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
                 )
                 ->join('albums', 'musics.id_album', '=', 'albums.id_album')
@@ -164,6 +166,7 @@ class MenuController extends Controller
                     'musics.duration',
                     'albums.id_album',
                     'musics.source',
+                    'albums.release_date',
                 )
                 ->get();
 
@@ -173,6 +176,46 @@ class MenuController extends Controller
                 "album" => $album,
                 "musics" => $songs,
                 "artist" => $artist
+            ]
+        ]);
+    }
+
+    public function SongPage(Request $request, $song_id){
+       $song = DB::table('music_listener')
+        ->select(
+            'musics.id_musik',
+            'musics.judul',
+            'musics.source',
+            'musics.artwork',
+            'musics.single',
+            'albums.foto',
+            'musics.release_date',
+            "penyanyi_musik.id_penyanyi",
+            "albums.nama",
+            "albums.id_album",
+            DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views'),
+            DB::raw('GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names'),
+            DB::raw('GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
+
+        )
+        ->join('musics', 'music_listener.id_musik', '=', 'musics.id_musik')
+        ->join('albums', 'musics.id_album', '=', 'albums.id_album')
+        ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
+        ->join('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
+        ->where('musics.id_musik', $song_id)
+        ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto','musics.source','musics.artwork',
+        'musics.single',
+        "penyanyi_musik.id_penyanyi","albums.nama",
+        'musics.release_date',
+        "albums.id_album",)
+        ->orderBy('total_views', 'DESC')
+        ->limit(20)
+        ->get();
+
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 10,
+                "music" => $song,
             ]
         ]);
     }

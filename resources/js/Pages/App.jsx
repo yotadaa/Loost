@@ -3,13 +3,11 @@ import Context from './component/provider/context';
 import AddArtists from "./admin/AddArtists";
 import AddAlbums from "./admin/AddAlbums";
 import ListArtists from "./admin/ListArtists";
-import { Inertia } from "@inertiajs/inertia";
 import ListAlbums from "./admin/ListAlbums";
 import AddMusics from "./admin/AddMusics";
 import PlayMusics from "./admin/PlayMusics";
 import Container from "./component/components/Container";
 import Dashboard from "./component/dashboard/Dashboard";
-import { usePage } from "@inertiajs/inertia-react";
 import { Song } from "./component/components/song";
 import axios from "axios";
 
@@ -17,27 +15,11 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import ArtistPage from "./component/components/artists/ArtistPage";
 import AlbumPage from "./component/components/albums/AlbumPage";
+import LinearProgress from '@mui/material/LinearProgress';
+import Children from "./Children";
+import SongPage from "./component/components/Song/SongPage";
 
-const Children = ({ menu }) => {
-    return (
-        <div className="flex flex-col items-center justify-center h-dvh gap-2 w-screen">
-            {Object.keys(menu).map((m, i) => {
-                return (
-                    <div
-                        key={i}
-                        className="bg-gray-200 py-2 px-2 rounded-md shadow-md hover:bg-gray-300 cursor-pointer flex  max-w-[400px] w-full gap-2"
-                        onClick={() => {
-                            Inertia.get(route(menu[m].route));
-                        }}
-                    >
-                        {menu[m].name}
-                    </div>
-                )
-            }
-            )}
-        </div>
-    )
-}
+
 
 function App({ props }) {
     const [menu, setMenu] = useState({
@@ -50,9 +32,13 @@ function App({ props }) {
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
         "8": { element: Container, name: "Cari lagu", route: "home", child: ArtistPage, icon: SearchIcon, show: true },
         "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false },
+        "10": { element: Container, name: "Songs", route: "song-page", child: SongPage, icon: SearchIcon, show: false },
     })
 
     const [currentMenu, setCurrentMenu] = useState(props.menu);
+    const [loading, setLoading] = useState({
+        page: false,
+    })
 
     const MenuComponent = menu[currentMenu]?.element;
     const [screen, setScreen] = useState({
@@ -70,7 +56,7 @@ function App({ props }) {
     });
 
     const loadAudio = async (src = "/undefined.mp3") => {
-
+        if (src === "/undefined.mp3") return;
         try {
             const parts = src.split('/');
             const filename = parts[parts.length - 1];
@@ -107,6 +93,7 @@ function App({ props }) {
 
     //ARTIST
     const [ARTIST, setARTIST] = useState(null);
+    const [MUSIC, setMUSIC] = useState(null);
     const [ALBUM, setALBUM] = useState(null);
     const [artistId, setArtistId] = useState(null);
     const [albumId, setAlbumId] = useState(null);
@@ -140,7 +127,7 @@ function App({ props }) {
 
             if (response.data.success) {
                 setSONG(prevState => ({ ...prevState, current: response.data.song[0] }));
-                loadAudio(response.data.song[0]?.source)
+                if (response.data.song[0]?.source) loadAudio(response.data.song[0]?.source || "/undefined.mp3")
             } else {
                 console.log("Failed to load the song, success flag is false.");
             }
@@ -190,10 +177,36 @@ function App({ props }) {
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId };
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+
+        // Extracting the day, month, and year
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        // Defining an array of month names
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const month = monthNames[date.getMonth()];
+
+        // Formatting the date
+        return `${day} ${month} ${year}`;
+    }
+
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId, setLoading, loading, MUSIC, setMUSIC, formatDate };
     return (
         <Context.Provider value={contextValue}>
+
             {currentMenu === null ? <Children menu={menu} /> : <MenuComponent props={props} Element={menu[currentMenu]?.child || "div"} />}
+            <div className="fixed top-0 left-0 z-[100000] w-screen text-gray-600"
+                style={{
+                    display: loading.page ? "block" : "none",
+                }}
+            >
+                <LinearProgress />
+            </div>
         </Context.Provider >
     );
 }

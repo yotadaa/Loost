@@ -7,33 +7,34 @@ import axios from 'axios';
 
 export default function Dashboard({ props }) {
 
-    const { screen, menuComponent } = useContext(Context);
+    const { screen, menuComponentm, setSONG, setARTIST, setArtistId, setALBUM, menuComponent, setLoading } = useContext(Context);
     const [popularNow, setPopularNow] = useState(props.props.populer_now);
     const [artists, setArtists] = useState(props.props.artists);
 
     const getDashboardProperties = async () => {
         if (props.props.populer_now || props.props.artists) return;
 
-        try {
-            const response = await axios.get(route('dashboard-only'), {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const response = await axios.get(route('dashboard-only'), {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-            if (response.data.success) {
-                setArtists(response.data.artists);
-                setPopularNow(response.data.populer_now);
-                // history.pushState({}, "", `home`)
-            }
-
-        } catch (e) {
-            console.error(e);
+        if (response.data.success) {
+            setArtists(response.data.artists);
+            setPopularNow(response.data.populer_now);
+            // history.pushState({}, "", `home`)
         }
     }
 
     getDashboardProperties();
+
+    useEffect(() => {
+        setLoading(p => ({ ...p, page: false }));
+        setARTIST(null);
+        setALBUM(null);
+    }, [])
 
 
 
@@ -41,12 +42,12 @@ export default function Dashboard({ props }) {
     return (
         <div className="h-full flex flex-col gap-10 py-10 w-full p-3 overflow-x-hidden custom-scrollbar"
         >
-            <TrendNow
+            {props.login ? <TrendNow
                 screen={screen}
                 menuComponent={menuComponent}
                 popularNow={popularNow}
                 title={"Recently played"}
-            />
+            /> : ""}
             <TrendArtist
                 screen={screen}
                 menuComponent={menuComponent}

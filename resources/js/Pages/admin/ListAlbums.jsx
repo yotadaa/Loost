@@ -49,10 +49,10 @@ export default function ListAlbums({ props }) {
                                     src={"/storage/" + album?.foto} alt="Artist Profile" />
                             </div>
                             <div className="font-bold">
-                                Album oleh {props.artists.find(o => o.id_penyanyi === album.id_artist).nama}
+                                Album oleh {props.artists.find(o => o.id_penyanyi === album?.id_artist)?.nama}
                             </div>
                             <div className="">
-                                Dibuat pada tanggal: {album.release_date}
+                                Dibuat pada tanggal: {album?.release_date}
                             </div>
                         </div>
                     </div>

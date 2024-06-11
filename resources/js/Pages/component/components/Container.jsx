@@ -8,7 +8,7 @@ import Player from "./Player/Player";
 import MenuVertical from "./MenuVertical";
 
 export default function Container({ Element, ...props }) {
-    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, artistId, setARTIST, setCurrentMenu, albumId, setALBUM } = useContext(Context);
+    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, artistId, setARTIST, setCurrentMenu, albumId, setALBUM, setLoading } = useContext(Context);
 
     useEffect(() => {
         localStorage.setItem("menu-width", menuComponent.width)
@@ -33,7 +33,11 @@ export default function Container({ Element, ...props }) {
 
     const loadArtist = async (artist_id) => {
         // if (props?.props?.artist) return;
-        if (!artist_id) return;
+        setLoading(p => ({ ...p, page: true }));
+        if (!artist_id) {
+            setLoading(p => ({ ...p, page: false }));
+            return;
+        }
         try {
             const response = await axios.get(route('artist-only', { artist_id: artist_id }), {
                 withCredentials: true,
@@ -50,18 +54,26 @@ export default function Container({ Element, ...props }) {
                     musics: response.data.musics,
                 });
                 setCurrentMenu("8");
-                history.pushState({}, "", `/artist/${artist_id}`)
+                history.pushState({}, "", `/artist/${artist_id}`);
+                setLoading(p => ({ ...p, page: false }));
             }
 
+            setLoading(p => ({ ...p, page: false }));
             console.log("Done")
         } catch (e) {
             console.error(e);
+            setLoading(p => ({ ...p, page: false }));
         }
+        setLoading(p => ({ ...p, page: false }));
     }
 
     const loadAlbum = async (album_id) => {
         // if (props?.props?.artist) return;
-        if (!album_id) return;
+        setLoading(p => ({ ...p, page: true }));
+        if (!album_id) {
+            setLoading(p => ({ ...p, page: false }));
+            return;
+        }
         try {
             const response = await axios.get(route('album-only', { album_id: album_id }), {
                 withCredentials: true,
@@ -79,13 +91,16 @@ export default function Container({ Element, ...props }) {
                 });
                 console.log("Data: ", response.data)
                 setCurrentMenu("9");
+                setLoading(p => ({ ...p, page: false }));
                 // history.pushState({}, "", `album/${album_id}`)
             }
 
             console.log("Done")
             history.pushState({}, "", `/album/${album_id}`)
+            setLoading(p => ({ ...p, page: false }));
         } catch (e) {
             console.error(e);
+            setLoading(p => ({ ...p, page: false }));
         }
     }
 
@@ -162,15 +177,15 @@ export default function Container({ Element, ...props }) {
             <div className={`flex w-full`}
                 style={{
                     maxHeight: screen.height - (screen.width > 500 ? 80 : 80 * 2 - 25),
-                    height: screen.height - (screen.width > 500 ? 80 : 80 * 2 - 25)
+                    height: screen.height // - (screen.width > 500 ? 80 : 80 * 2 - 25)
                 }}
             >
                 {screen.width > 500 ? <Menu /> : ""}
                 <Element props={props} />
             </div>
-            <div className="w-full relative flex flex-col"
+            <div className="w-full fixed h-screen flex flex-col justify-end pointer-events-none"
                 style={{
-                    height: screen.width > 500 ? 80 : 500,
+                    // height: screen.width > 500 ? 80 : 500,
                 }}
             >
                 <Player />
