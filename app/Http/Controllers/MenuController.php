@@ -91,24 +91,39 @@ class MenuController extends Controller
             $songs = $songs->merge($albumSongs);
         }
         $singleSongs = DB::table('musics')
-            ->select(
-                'musics.id_musik',
-                'musics.judul',
-                'musics.source',
-                'musics.artwork',
-                'musics.duration',
-                'musics.single',
-                DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
-            )
-            ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
-            ->join('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
-            ->where('penyanyi_musik.id_penyanyi', $artist_id)
-            ->where("musics.single", 'T')
-            ->groupBy('musics.id_musik', 'musics.judul', 'musics.source', 'musics.artwork', 'musics.duration', 'musics.single', )
-            ->orderBy('total_views', 'DESC')
-            ->get();
+                ->select(
+                    "musics.id_musik",
+                    "musics.judul",
+                    "musics.release_date",
+                    "musics.duration",
+                    "musics.id_genre",
+                    "musics.id_artist",
+                    "musics.single",
+                    "musics.source",
+                    "musics.artwork",
+                    DB::raw('COUNT(music_listener.id_musik) as total_views')
+                )
+                ->join('penyanyi_musik', 'penyanyi_musik.id_musik','=','musics.id_musik')
+                ->join("artists", "artists.id_penyanyi","=","penyanyi_musik.id_penyanyi")
+                ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+                ->where('musics.single',"=", "T")
+                ->groupBy(
+                    "musics.id_musik",
+                    "musics.judul",
+                    "musics.release_date",
+                    "musics.duration",
+                    "musics.id_genre",
+                    "musics.id_artist",
+                    "musics.single",
+                    "musics.source",
+                    "musics.artwork"
+                 )
+                ->orderBy('total_views', 'DESC')
+                ->get();
+
 
         // Merge the album songs into the songs collection
+        $songs = $songs->merge($singleSongs);
         $songsArray = $songs->toArray();
         usort($songsArray, function($a, $b) {
             return $b->total_views <=> $a->total_views;
@@ -218,5 +233,14 @@ class MenuController extends Controller
                 "music" => $song,
             ]
         ]);
+    }
+
+    public function SearchPage(Request $request) {
+
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 11,
+            ]]
+        );
     }
 }

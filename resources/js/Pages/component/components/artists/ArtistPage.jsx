@@ -53,7 +53,7 @@ export default function ArtistPage({ props }) {
         console.log("Backward")
     })
 
-    console.log(ARTIST)
+    console.log(props?.props)
 
     return (
         <div className="h-full flex flex-col gap-10 w-full p-3 overflow-x-hidden custom-scrollbar"

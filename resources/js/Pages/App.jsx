@@ -18,21 +18,23 @@ import AlbumPage from "./component/components/albums/AlbumPage";
 import LinearProgress from '@mui/material/LinearProgress';
 import Children from "./Children";
 import SongPage from "./component/components/Song/SongPage";
+import SearchPage from "./component/components/Search/SearchPage";
 
 
 
 function App({ props }) {
     const [menu, setMenu] = useState({
-        "1": { element: AddArtists, name: "Tambah Artis", route: "add-artists", show: false },
-        "2": { element: AddAlbums, name: "Tambah Album", route: "add-albums", show: false },
-        "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics", show: false },
-        "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists", show: false },
-        "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false },
-        "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false },
+        "1": { element: AddArtists, name: "Tambah Artis", route: "add-artists", show: false, url: "/" },
+        "2": { element: AddAlbums, name: "Tambah Album", route: "add-albums", show: false, url: "/" },
+        "5": { element: AddMusics, name: "Tambah Musics", route: "add-musics", show: false, url: "/" },
+        "3": { element: ListArtists, name: "Lihat Daftar Artis", route: "list-artists", show: false, url: "/" },
+        "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false, url: "/" },
+        "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false, url: "/" },
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
-        "8": { element: Container, name: "Cari lagu", route: "home", child: ArtistPage, icon: SearchIcon, show: true },
-        "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false },
-        "10": { element: Container, name: "Songs", route: "song-page", child: SongPage, icon: SearchIcon, show: false },
+        "8": { element: Container, name: "Cari lagu", route: "search-page", child: ArtistPage, icon: SearchIcon, show: false, url: "/home" },
+        "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false, url: "/" },
+        "10": { element: Container, name: "Songs", route: "song-page", child: SongPage, icon: SearchIcon, show: false, url: "/" },
+        "11": { element: Container, name: "Search", route: "song-page", child: SearchPage, icon: SearchIcon, show: true, url: "/search" },
     })
 
     const [currentMenu, setCurrentMenu] = useState(props.menu);

@@ -82,7 +82,6 @@ class ListenerController extends Controller
 
     public function ArtistGet(Request $request, $artist_id) {
         // Fetch the artist by ID
-        try {
             $artist = DB::table("artists")->where("id_penyanyi", $artist_id)->get();
 
             // Fetch the albums by artist ID
@@ -125,13 +124,21 @@ class ListenerController extends Controller
             }
             $singleSongs = DB::table('musics')
                 ->select(
-                    'musics.*',
+                    "musics.id_musik",
+                    "musics.judul",
+                    "musics.release_date",
+                    "musics.duration",
+                    "musics.id_genre",
+                    "musics.id_artist",
+                    "musics.single",
+                    "musics.source",
+                    "musics.artwork",
                     DB::raw('COUNT(music_listener.id_musik) as total_views')
                 )
                 ->join('penyanyi_musik', 'penyanyi_musik.id_musik','=','musics.id_musik')
                 ->join("artists", "artists.id_penyanyi","=","penyanyi_musik.id_penyanyi")
                 ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
-                ->where('musics.single', "T")
+                ->where('musics.single',"=", "T")
                 ->groupBy(
                     "musics.id_musik",
                     "musics.judul",
@@ -147,11 +154,13 @@ class ListenerController extends Controller
                 ->get();
 
             // Merge the album songs into the songs collection
+            $songs =  $songs->merge($singleSongs);
             $songsArray = $songs->toArray();
             usort($songsArray, function($a, $b) {
                 return $b->total_views <=> $a->total_views;
             });
             $songs = collect($songsArray);
+            // $singleSongs = DB::table("musics")->where(1)->get();
 
             return response()->json([
                 "success" => true,
@@ -159,11 +168,6 @@ class ListenerController extends Controller
                 "albums" => $albums,
                 "musics" => $songs,
             ]);
-        } catch (e) {
-            return response()->json([
-                "success" => false,
-            ]);
-        }
     }
 
     public function DashboardOnly(Request $request) {
@@ -207,39 +211,46 @@ class ListenerController extends Controller
     public function AlbumGet(Request $request, $album_id) {
         try {
             $album = DB::table("albums")
-                        ->where("id_album", $album_id)
-                        ->get();
-
-            $artist = DB::table("artists")
-                        ->select(
-                            "artists.*"
-                        )
-                        ->join("albums", "albums.id_artist","=", "artists.id_penyanyi")
-                        ->where('albums.id_album', $album_id)
-                        ->get();
-
-
-            $songs =DB::table('musics')
-                    ->select(
-                        'musics.id_musik',
-                        'musics.judul',
-                        'musics.artwork',
-                        'musics.duration',
-                        'musics.single',
-                        'musics.source',
-                        DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
-                    )
-                    ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
-                    ->where('single', 'T')
-                    ->groupBy(
-                        'musics.id_musik',
-                        'musics.judul',
-                        'musics.artwork',
-                        'musics.single',
-                        'musics.duration',
-                        'musics.source',
-                    )
+                    ->where("id_album", $album_id)
                     ->get();
+
+        $artist = DB::table("artists")
+                    ->select(
+                        "artists.*"
+                    )
+                    ->join("albums", "albums.id_artist","=", "artists.id_penyanyi")
+                    ->where('albums.id_album', $album_id)
+                    ->get();
+
+
+        $songs =DB::table('musics')
+                ->select(
+                    'musics.id_musik',
+                    'musics.judul',
+                    'musics.artwork',
+                    'musics.duration',
+                    'musics.single',
+                    'albums.foto',
+                    'musics.source',
+                    'albums.id_album',
+                    'albums.release_date',
+                    DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views')
+                )
+                ->join('albums', 'musics.id_album', '=', 'albums.id_album')
+                ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
+                ->where('musics.id_album', $album_id)
+                ->groupBy(
+                    'musics.id_musik',
+                    'musics.judul',
+                    'albums.foto',
+                    'musics.artwork',
+                    'musics.single',
+                    'musics.duration',
+                    'albums.id_album',
+                    'musics.source',
+                    'albums.release_date',
+                )
+                ->get();
 
             return response()->json([
                     "success" => true,
@@ -254,5 +265,8 @@ class ListenerController extends Controller
                 "message" => e
             ]);
         }
+    }
+
+    public function SongGet(Request $request, $album_id) {
     }
 }

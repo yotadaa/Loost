@@ -45,3 +45,7 @@ Route::get('/album-only/{album_id}', [ListenerController::class, 'AlbumGet'])->n
 
 Route::get('/music/{song_id}', [MenuController::class, 'SongPage'])->name("song-page");
 Route::get('/music-only/{song_id}', [ListenerController::class, 'SongGet'])->name("song-only");
+
+
+Route::get('/search', [MenuController::class, 'SearchPage'])->name("search-page");
+

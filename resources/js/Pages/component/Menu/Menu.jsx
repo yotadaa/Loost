@@ -35,8 +35,9 @@ export default function Menu({ props }) {
                             }}
                             onClick={() => {
                                 setArtistId(null);
-                                setCurrentMenu("7");
-                                history.pushState({}, "", "/home")
+                                setCurrentMenu(o.id);
+
+                                history.pushState({}, "", o.url)
                             }}
                         >
                             <o.icon className={`scale-[1.3] transition-all duration-300 ease-in-out ${menuComponent.width > 100 ? "ml-0 " : "ml-[10px]"}`} /> <span className={`transition-all duration-300 ease-in-out ${menuComponent.width > 100 ? "opacity-100" : "opacity-0"} whitespace-nowrap`}>{o.name}</span>
