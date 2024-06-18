@@ -7,12 +7,13 @@ import axios from 'axios';
 
 export default function Dashboard({ props }) {
 
+    history.pushState({}, "", "/home");
+
     const { screen, menuComponentm, setSONG, setARTIST, setArtistId, setALBUM, menuComponent, setLoading } = useContext(Context);
-    const [popularNow, setPopularNow] = useState(props.props.populer_now);
-    const [artists, setArtists] = useState(props.props.artists);
+    const [popularNow, setPopularNow] = useState([]);
+    const [artists, setArtists] = useState([]);
 
     const getDashboardProperties = async () => {
-        if (props.props.populer_now || props.props.artists) return;
 
         const response = await axios.get(route('dashboard-only'), {
             withCredentials: true,
@@ -24,13 +25,12 @@ export default function Dashboard({ props }) {
         if (response.data.success) {
             setArtists(response.data.artists);
             setPopularNow(response.data.populer_now);
-            // history.pushState({}, "", `home`)
         }
     }
 
-    getDashboardProperties();
 
     useEffect(() => {
+        getDashboardProperties();
         setLoading(p => ({ ...p, page: false }));
         setARTIST(null);
         setALBUM(null);

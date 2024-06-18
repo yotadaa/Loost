@@ -30,7 +30,7 @@ export default function TrendArtist({
                             zIndex: 1,
                         }}
                     >
-                        <div className='h-full py-1 absolute top-0 left-0 w-full flex justify-between items-center z-[1] pointer-events-none '>
+                        <div className='h-full py-1 absolute top-0 left-0 w-full flex justify-between items-center z-[1] pointer-events-none'>
                             <div
                                 onClick={() => {
                                     // Smooth scrolling left
@@ -39,8 +39,10 @@ export default function TrendArtist({
                                         behavior: 'smooth',
                                     });
                                 }}
+                                className='h-full px-4 flex items-center rounded-md relative bg-transparent overflow-hidden'
                             >
-                                <ArrowBackIosNewIcon className='cursor-pointer scale-[2] z-[10] h-full group pointer-events-auto' />
+                                <ArrowBackIosNewIcon className='cursor-pointer scale-[2] z-[10] group pointer-events-auto ' />
+                                <div className='w-full h-full bg-transparent absolute top-0 left-0 blur-xl'></div>
                             </div>
                             <div
                                 onClick={() => {
@@ -60,7 +62,7 @@ export default function TrendArtist({
 
                             ref={scrollContainerRef}
                         >
-                            {popularNow?.slice(0, 10).map((o, i) => (// (parseInt(screen.width / 200) > 5 ? parseInt(screen.width / 200) : 5)).map((o, i) => (
+                            {popularNow?.map((o, i) => (// (parseInt(screen.width / 200) > 5 ? parseInt(screen.width / 200) : 5)).map((o, i) => (
                                 <ArtistCard
                                     key={i}
                                     index={i}

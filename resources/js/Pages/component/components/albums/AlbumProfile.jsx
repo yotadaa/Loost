@@ -1,9 +1,12 @@
+import { useEffect } from "react"
 
 
 
 export default function AlbumProfile({
-    ALBUM, imageUrl, setArtistId
+    ALBUM, imageUrl, setArtistId, setCurrentMenu
 }) {
+
+    useEffect(() => setArtistId(null));
 
     return (
         <header className="">
@@ -29,7 +32,10 @@ export default function AlbumProfile({
                         <div className="text-bottom text-3xl font-bold text-nowrap truncate ">
                             <div>{ALBUM?.album?.nama}</div>
                             <div className="font-thin text-sm hover:underline cursor-pointer w-fit"
-                                onClick={() => setArtistId(ALBUM?.artist.id_penyanyi)}
+                                onClick={() => {
+                                    setCurrentMenu("8");
+                                    setArtistId(ALBUM?.artist.id_penyanyi);
+                                }}
                             >{ALBUM?.artist?.nama}</div>
                         </div>
                     </div>

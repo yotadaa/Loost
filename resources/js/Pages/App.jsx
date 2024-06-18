@@ -19,6 +19,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Children from "./Children";
 import SongPage from "./component/components/Song/SongPage";
 import SearchPage from "./component/components/Search/SearchPage";
+import LyricsPage from "./component/components/Lyrics/LyricsPage";
 
 
 
@@ -31,10 +32,12 @@ function App({ props }) {
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false, url: "/" },
         "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false, url: "/" },
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
-        "8": { element: Container, name: "Cari lagu", route: "search-page", child: ArtistPage, icon: SearchIcon, show: false, url: "/home" },
+        "8": { element: Container, name: "Halaman Artist", route: "search-page", child: ArtistPage, icon: SearchIcon, show: false, url: "/home" },
         "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false, url: "/" },
         "10": { element: Container, name: "Songs", route: "song-page", child: SongPage, icon: SearchIcon, show: false, url: "/" },
-        "11": { element: Container, name: "Search", route: "song-page", child: SearchPage, icon: SearchIcon, show: true, url: "/search" },
+        "11": { element: Container, name: "Search", route: "search-page", child: SearchPage, icon: SearchIcon, show: true, url: "/search" },
+        "12": { element: Container, name: "Search", route: "lyrics-page", child: LyricsPage, icon: SearchIcon, show: false, url: "/lyrics" },
+
     })
 
     const [currentMenu, setCurrentMenu] = useState(props.menu);
@@ -99,6 +102,7 @@ function App({ props }) {
     const [ALBUM, setALBUM] = useState(null);
     const [artistId, setArtistId] = useState(null);
     const [albumId, setAlbumId] = useState(null);
+    const [musicId, setMusicId] = useState(null);
 
     //URL
     const URI = new URL(location);
@@ -128,7 +132,13 @@ function App({ props }) {
 
 
             if (response.data.success) {
-                setSONG(prevState => ({ ...prevState, current: response.data.song[0] }));
+                setSONG(prevState => ({
+                    ...prevState,
+                    current: {
+                        ...response.data.song[0],
+                        lyrics: response.data.lyrics
+                    }
+                }));
                 if (response.data.song[0]?.source) loadAudio(response.data.song[0]?.source || "/undefined.mp3")
             } else {
                 console.log("Failed to load the song, success flag is false.");
@@ -154,7 +164,6 @@ function App({ props }) {
     });
 
     function handleChangeMusic(o) {
-
         setSONG(p => ({ ...p, current: o }));
         localStorage.setItem("current-time", 0);
         setAUDIO(p => ({
@@ -197,7 +206,7 @@ function App({ props }) {
         return `${day} ${month} ${year}`;
     }
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId, setLoading, loading, MUSIC, setMUSIC, formatDate };
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId, setLoading, loading, MUSIC, setMUSIC, formatDate, musicId, setMusicId };
     return (
         <Context.Provider value={contextValue}>
 

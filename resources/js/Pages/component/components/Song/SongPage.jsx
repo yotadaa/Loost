@@ -11,10 +11,15 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 
 export default function SongPage({ props }) {
-    const { MUSIC, formatSeconds, setMUSIC, screen, getImageFilename, SONG, handleChangeMusic, setArtistId, AUDIO, audioRef, formatDate } = useContext(Context);
+
+    const { MUSIC, formatSeconds, setMUSIC, screen, getImageFilename, handleChangeMusic, setArtistId, AUDIO, audioRef, formatDate, SONG, setAUDIO, musicId, setMusicId, setAlbumId, setLoading } = useContext(Context);
+    if (musicId) {
+        history.pushState({}, "", `/music/${musicId}`);
+    }
     const [filename, setFilename] = useState(getImageFilename(MUSIC && MUSIC.single === "T" ? MUSIC?.artwork : MUSIC?.foto));
     const [imageUrl, setImageUrl] = useState(filename ? route("get-image", { category: "albums", filename }) : '');
     const [relatedSong, setRelatedSong] = useState([]);
+
 
 
     async function loadRelatedSong(album_id) {
@@ -26,16 +31,43 @@ export default function SongPage({ props }) {
         }
     }
 
-    useEffect(() => {
-        if (MUSIC) setMUSIC(MUSIC ? MUSIC : props?.props.music ? props?.props?.music[0] : null,)
-        else {
-            setMUSIC(props?.props.music ? props?.props?.music[0] : null)
+    const loadPlayedSong = async (music_id) => {
+        if (!music_id) return;
+        console.log("music id: ", music_id)
+        try {
+            const response = await axios.get(route('get-complete-song', { song_id: music_id }), {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+
+            if (response.data.success) {
+                setMUSIC(response.data.song[0]);
+                loadRelatedSong(response.data.song[0]?.id_album);
+                setLoading(p => ({ ...p, page: false }))
+                console.log("success: ", response.data)
+            } else {
+                console.log("Failed to load the song, success flag is false.");
+            }
+        } catch (e) {
+            console.error(e);
         }
-
-    }, []);
+    };
 
     useEffect(() => {
-        loadRelatedSong(MUSIC?.id_album);
+        setLoading(p => ({ ...p, page: false }))
+        setMusicId(musicId ? musicId : props.props.musicId);
+        setAlbumId(null);
+        setMusicId(null);
+    }, [])
+    useEffect(() => {
+        loadPlayedSong(musicId ? musicId : props.props.musicId);
+        console.log("id: ", musicId)
+    }, [musicId])
+
+    useEffect(() => {
         setFilename(getImageFilename(MUSIC && MUSIC.single === "T" ? MUSIC?.artwork : MUSIC?.foto));
     }, [MUSIC]);
 
@@ -75,6 +107,8 @@ export default function SongPage({ props }) {
                         audioRef={audioRef}
                         formatDate={formatDate}
                         handleChangeMusic={handleChangeMusic}
+                        SONG={SONG}
+                        setAUDIO={setAUDIO}
                     />
                     <div className="p-4 text-xl font-thin text-gray-50">
                         <div>Album</div>
@@ -84,7 +118,11 @@ export default function SongPage({ props }) {
                                 width={60}
                                 height={60}
                             />
-                            <div>{MUSIC?.nama}</div>
+                            <div className="font-semibold hover:underline cursor-pointer"
+                                onClick={() => {
+                                    setAlbumId(MUSIC?.id_album);
+                                }}
+                            >{MUSIC?.nama}</div>
                         </div>
                     </div>
                     <div className="p-4 text-xl font-thin text-gray-50">
@@ -110,7 +148,10 @@ export default function SongPage({ props }) {
 
                                             </div></div>
                                         <div className="flex font-thin text-lg flex-col">
-                                            <div className="truncate max-w-[200px]">{o.judul}</div>
+                                            <div className="truncate max-w-[200px] hover:underline cursor-pointer"
+                                                onClick={() => {
+                                                    setMusicId(o?.id_musik)
+                                                }}>{o.judul}</div>
                                             <div className="text-xs text-gray-50 hover:underline cursor-pointer truncate max-w-[200px] w-fit"
                                                 onClick={() => setArtistId(MUSIC?.id_penyanyi)}
                                             >{MUSIC?.artist_names}</div>

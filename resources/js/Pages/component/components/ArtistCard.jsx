@@ -13,7 +13,7 @@ export default function ArtistCard({
     o, hover, setHover, index
 }) {
 
-    const { screen, menuComponent, mainComponent, setCurrentMenu, setARTIST, setArtistId } = useContext(Context);
+    const { screen, menuComponent, setCurrentMenu, mainComponent, setARTIST, setArtistId } = useContext(Context);
 
     return (
         <div className={` relative flex-shrink-0 overflow-hidden cursor-pointer rounded-md transform transition-transform duration-300 ease-in-out ${hover.tren === index ? "bg-gray-200 shadow-sm " : "bg-transparent shadow-none"}`}
@@ -39,6 +39,7 @@ export default function ArtistCard({
             }}
             onClick={() => {
                 setArtistId(o?.id_penyanyi);
+                setCurrentMenu("8");
             }}
         >
 

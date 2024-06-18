@@ -10,6 +10,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LyricsIcon from '@mui/icons-material/Lyrics';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Tooltip } from "@mui/material";
+import { Song } from '../song';
 
 const PrettoSlider = styled(Slider)(({ theme }) => ({
     color: '#eeeeee',
@@ -61,7 +62,7 @@ const PrettoSlider = styled(Slider)(({ theme }) => ({
 }));
 
 export default function SongProfile({
-    MUSIC, imageUrl, setArtistId, AUDIO, audioRef, formatDate, handleChangeMusic
+    MUSIC, imageUrl, setArtistId, AUDIO, audioRef, formatDate, handleChangeMusic, SONG, setAUDIO
 }) {
 
     return (
@@ -96,10 +97,13 @@ export default function SongProfile({
                 <div className='flex gap-6 w-fit px-4 h-full py-1'>
                     <Tooltip title="Putar" placement="top-start">
                         <div className="relative flex items-center justify-center">
-                            <PlayArrowIcon className="scale-[1.5] text-gray-50" />
+                            {MUSIC?.id_musik === SONG.current?.id_musik && !AUDIO.playing ? <PlayArrowIcon className="scale-[1.5] text-gray-50" /> : <PauseIcon className="scale-[1.5] text-gray-50" />}
                             <div className="w-[30px] h-[30px] absolute bg-opacity-[10%] bg-white scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "
                                 onClick={() => {
-                                    handleChangeMusic(MUSIC)
+                                    if (MUSIC?.id_musik !== SONG?.current?.id_musik) handleChangeMusic(MUSIC);
+                                    else {
+                                        setAUDIO(p => ({ ...p, playing: !p.playing }))
+                                    }
                                 }}
                             ></div>
                         </div>

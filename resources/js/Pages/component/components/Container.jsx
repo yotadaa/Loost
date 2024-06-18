@@ -8,7 +8,7 @@ import Player from "./Player/Player";
 import MenuVertical from "./MenuVertical";
 
 export default function Container({ Element, ...props }) {
-    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, artistId, setARTIST, setCurrentMenu, albumId, setALBUM, setLoading } = useContext(Context);
+    const { menuComponent, setMenuComponent, screen, setScreen, SONG, audioRef, setAUDIO, AUDIO, setMainComponent, ARTIST, musicId, artistId, setARTIST, setCurrentMenu, albumId, setALBUM, setLoading, setArtistId } = useContext(Context);
 
     useEffect(() => {
         localStorage.setItem("menu-width", menuComponent.width)
@@ -30,45 +30,7 @@ export default function Container({ Element, ...props }) {
     }, [screen.width, menuComponent.width])
 
 
-
-    const loadArtist = async (artist_id) => {
-        // if (props?.props?.artist) return;
-        setLoading(p => ({ ...p, page: true }));
-        if (!artist_id) {
-            setLoading(p => ({ ...p, page: false }));
-            return;
-        }
-        try {
-            const response = await axios.get(route('artist-only', { artist_id: artist_id }), {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.data.success) {
-                console.log(response.data)
-                setARTIST({
-                    artist: response.data.artist[0],
-                    albums: response.data.albums,
-                    musics: response.data.musics,
-                });
-                setCurrentMenu("8");
-                history.pushState({}, "", `/artist/${artist_id}`);
-                setLoading(p => ({ ...p, page: false }));
-            }
-
-            setLoading(p => ({ ...p, page: false }));
-            console.log("Done")
-        } catch (e) {
-            console.error(e);
-            setLoading(p => ({ ...p, page: false }));
-        }
-        setLoading(p => ({ ...p, page: false }));
-    }
-
     const loadAlbum = async (album_id) => {
-        // if (props?.props?.artist) return;
         setLoading(p => ({ ...p, page: true }));
         if (!album_id) {
             setLoading(p => ({ ...p, page: false }));
@@ -152,13 +114,27 @@ export default function Container({ Element, ...props }) {
         setAUDIO(p => ({ ...p, currentTime: localStorage.getItem("current-time") || 1 }))
     }, [AUDIO.currentTime])
 
-    useEffect(() => {
-        loadArtist(artistId)
-    }, [artistId]);
 
     useEffect(() => {
-        loadAlbum(albumId)
+        loadAlbum(albumId ? albumId : props.props.albumId)
     }, [albumId]);
+
+
+    useEffect(() => {
+        if (artistId) {
+            setLoading(p => ({ ...p, page: true }));
+            setCurrentMenu("8");
+        }
+    }, [artistId]);
+    useEffect(() => {
+        setArtistId(null);
+    }, [])
+    useEffect(() => {
+        if (musicId) {
+            setLoading(p => ({ ...p, page: true }))
+            setCurrentMenu("10");
+        }
+    }, [musicId])
 
 
     return (

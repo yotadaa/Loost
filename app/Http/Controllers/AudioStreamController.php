@@ -62,7 +62,6 @@ class AudioStreamController extends Controller
             'webp' => 'image/webp',
             'svg' => 'image/svg+xml',
             'tiff' => 'image/tiff',
-            // Add more types as needed
         ];
         $contentType = $mimeTypes[strtolower($extension)] ?? 'application/octet-stream';
 

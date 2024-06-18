@@ -7,28 +7,22 @@ import PauseIcon from '@mui/icons-material/Pause';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function AlbumPage({ props }) {
-    const { ALBUM, formatDate, formatSeconds, setALBUM, screen, getImageFilename, SONG, handleChangeMusic, setArtistId } = useContext(Context);
+
+
+    const { ALBUM, formatDate, formatSeconds, setALBUM, screen, getImageFilename, SONG, handleChangeMusic, setArtistId, setCurrentMenu, albumId, setMusicId, musicId, setLoading } = useContext(Context);
     const [filename, setFilename] = useState(getImageFilename(ALBUM?.album?.foto));
     const [imageUrl, setImageUrl] = useState(filename ? route("get-image", { category: "albums", filename }) : '');
     useEffect(() => {
-        setArtistId(null);
-        if (ALBUM) setALBUM(ALBUM ? ALBUM : {
-            artist: props?.props?.artist ? props?.props?.artist[0] : null,
-            album: props?.props ? props?.props?.album[0] : null,
-            musics: Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]),
-        })
-        else {
-            setALBUM({
-                artist: props?.props.artist ? props?.props?.artist[0] : null,
-                album: props?.props.album ? props?.props?.album : null,
-                musics: props?.props.musics ? Object.keys(props?.props?.musics).map(o => props?.props?.musics[o]) : null,
-            })
+        if (props.props.albumId) {
+            history.pushState({}, "", `/album/${props?.props?.albumId}`)
+        } else {
+            history.pushState({}, "", `/album/${albumId}`)
         }
+        setArtistId(null);
     }, []);
 
     useEffect(() => {
         setFilename(getImageFilename(ALBUM?.album?.foto));
-        console.log(ALBUM)
     }, [ALBUM]);
 
     useEffect(() => {
@@ -57,6 +51,7 @@ export default function AlbumPage({ props }) {
                         setArtistId={setArtistId}
                         ALBUM={ALBUM}
                         imageUrl={imageUrl}
+                        setCurrentMenu={setCurrentMenu}
                     />
                     <div>
                         <div className="p-4">
@@ -90,7 +85,12 @@ export default function AlbumPage({ props }) {
 
                                             </div></div>
                                         <div className="flex font-thin text-lg flex-col">
-                                            <div className="truncate max-w-[200px]">{o.judul}</div>
+                                            <div className="truncate max-w-[200px] hover:underline cursor-pointer"
+                                                onClick={() => {
+                                                    setMusicId(o?.id_musik)
+                                                    console.log(musicId)
+                                                }}
+                                            >{o.judul}</div>
                                             <div className="text-xs text-gray-50 hover:underline cursor-pointer truncate max-w-[200px] w-fit"
                                                 onClick={() => setArtistId(ALBUM?.artist.id_penyanyi)}
                                             >{ALBUM?.artist?.nama}</div>

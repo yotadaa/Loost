@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import Context from "../../provider/context"
 import ArtistProfile from "./ArtistProfile";
+import axios from "axios";
 
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -12,7 +13,7 @@ import TrackList from "../TrackList";
 
 export default function ArtistPage({ props }) {
 
-    const { ARTIST, setARTIST, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId, setArtistId } = useContext(Context);
+    const { ARTIST, setARTIST, setLoading, artistId, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId, setArtistId } = useContext(Context);
     const [active, setActive] = useState(0);
 
 
@@ -37,23 +38,46 @@ export default function ArtistPage({ props }) {
         return `${formattedMinutes}:${formattedSeconds}`;
     }
 
+    const loadArtist = async (artist_id) => {
+        setLoading(p => ({ ...p, page: true }));
+        if (!artist_id) {
+            setLoading(p => ({ ...p, page: false }));
+            return;
+        }
+        try {
+            const response = await axios.get(route('artist-only', { artist_id: artist_id }), {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
+            if (response.data.success) {
+                setARTIST({
+                    artist: response.data.artist[0],
+                    albums: response.data.albums,
+                    musics: response.data.musics,
+                });
+                setCurrentMenu("8");
+                history.pushState({}, "", `/artist/${artist_id}`);
+                setLoading(p => ({ ...p, page: false }));
+            }
+
+            setLoading(p => ({ ...p, page: false }));
+            console.log("Done")
+        } catch (e) {
+            console.error(e);
+            setLoading(p => ({ ...p, page: false }));
+        }
+        setLoading(p => ({ ...p, page: false }));
+    }
+
+    useEffect(() => setArtistId(artistId ? artistId : props.props.artistId));
     useEffect(() => {
-        setARTIST(ARTIST ? ARTIST : {
-            artist: props.props.artist[0],
-            albums: props.props.albums,
-            musics: Object.keys(props.props.musics).map(o => props.props.musics[o]),
-
-        })
-    }, [])
+        loadArtist(artistId)
+    }, [artistId]);
 
 
-    useCustomBackButton(() => {
-        // window.history.pushState(null, '', "/home");
-        console.log("Backward")
-    })
-
-    console.log(props?.props)
 
     return (
         <div className="h-full flex flex-col gap-10 w-full p-3 overflow-x-hidden custom-scrollbar"
@@ -157,17 +181,16 @@ export default function ArtistPage({ props }) {
                     </div>
                     <TrackList
                         ARTIST={ARTIST}
-                        LIST={ARTIST?.musics.map(o => o?.single === "T")}
+                        LIST={ARTIST?.musics.filter(o => o.single === "T")}
                         active={active}
                         handleChangeMusic={handleChangeMusic}
                         SONG={SONG}
                         setArtistId={setArtistId}
                         formatSeconds={formatSeconds}
                         getImageFilename={getImageFilename}
-                        id="single"
+                        id="popular"
                         display={2}
                     />
-
 
                 </div>
             </div>

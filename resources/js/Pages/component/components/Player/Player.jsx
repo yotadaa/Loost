@@ -67,7 +67,7 @@ const PrettoSlider = styled(Slider)(({ theme }) => ({
 
 export default function Player({ }) {
 
-    const { menuComponent, screen, audioRef, SONG, setAUDIO, AUDIO, setArtistId } = useContext(Context);
+    const { menuComponent, screen, audioRef, SONG, setAUDIO, AUDIO, setArtistId, setMusicId, setCurrentMenu } = useContext(Context);
     const [playerProperties, setPlayerProperties] = useState({
         width: window.innerWidth - (menuComponent.width + 30),
     })
@@ -196,7 +196,11 @@ export default function Player({ }) {
                         </div>
                     </div>
                     <div className="flex flex-col px-1 overflow-hidden">
-                        <p className="text-base hover:underline cursor-pointer font-semibold whitespace-nowrap text-nowrap text-ellipsis">{SONG.current?.judul || "Song title"}</p>
+                        <p className="text-base hover:underline cursor-pointer font-semibold whitespace-nowrap text-nowrap text-ellipsis"
+                            onClick={() => {
+                                setMusicId(SONG.current?.id_musik)
+                            }}
+                        >{SONG.current?.judul || "Song title"}</p>
                         <p className="text-xs font-semibold hover:underline cursor-pointer"
                             onClick={() => {
                                 setArtistId(SONG.current?.id_artist);
@@ -219,9 +223,15 @@ export default function Player({ }) {
                             </div>
                         </Tooltip>
                         <Tooltip title="Lirik" placement="top-start">
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative flex items-center justify-center"
+
+                            >
                                 <LyricsIcon className="scale-[0.9] text-gray-800" />
-                                <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "></div>
+                                <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out"
+                                    onClick={() => {
+                                        setCurrentMenu("12")
+                                    }}></div>
+
                             </div>
                         </Tooltip>
 
