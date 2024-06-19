@@ -132,13 +132,7 @@ function App({ props }) {
 
 
             if (response.data.success) {
-                setSONG(prevState => ({
-                    ...prevState,
-                    current: {
-                        ...response.data.song[0],
-                        lyrics: response.data.lyrics
-                    }
-                }));
+                setSONG(prevState => ({ ...prevState, current: { ...response.data.song[0], lyrics: response.data.lyrics } }));
                 if (response.data.song[0]?.source) loadAudio(response.data.song[0]?.source || "/undefined.mp3")
             } else {
                 console.log("Failed to load the song, success flag is false.");

@@ -67,11 +67,12 @@ const PrettoSlider = styled(Slider)(({ theme }) => ({
 
 export default function Player({ }) {
 
-    const { menuComponent, screen, audioRef, SONG, setAUDIO, AUDIO, setArtistId, setMusicId, setCurrentMenu } = useContext(Context);
+    const { menuComponent, currentMenu, screen, audioRef, SONG, setAUDIO, AUDIO, setArtistId, setMusicId, setCurrentMenu } = useContext(Context);
     const [playerProperties, setPlayerProperties] = useState({
         width: window.innerWidth - (menuComponent.width + 30),
     })
-    const [loading, setLoading] = useState(AUDIO.loading)
+    const [loading, setLoading] = useState(AUDIO.loading);
+    const [prevMenu, setPrevMenu] = useState("");
 
     function formatSeconds(seconds) {
         // Handle negative or non-numeric inputs (optional)
@@ -229,7 +230,12 @@ export default function Player({ }) {
                                 <LyricsIcon className="scale-[0.9] text-gray-800" />
                                 <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out"
                                     onClick={() => {
-                                        setCurrentMenu("12")
+                                        setPrevMenu(currentMenu);
+                                        if (currentMenu !== "12") {
+                                            setCurrentMenu("12")
+                                        } else {
+                                            setCurrentMenu(prevMenu)
+                                        }
                                     }}></div>
 
                             </div>
