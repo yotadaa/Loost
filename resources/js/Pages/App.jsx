@@ -10,6 +10,7 @@ import Container from "./component/components/Container";
 import Dashboard from "./component/dashboard/Dashboard";
 import { Song } from "./component/components/song";
 import axios from "axios";
+import { usePage } from '@inertiajs/inertia-react';
 
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
@@ -21,6 +22,9 @@ import SongPage from "./component/components/Song/SongPage";
 import SearchPage from "./component/components/Search/SearchPage";
 import LyricsPage from "./component/components/Lyrics/LyricsPage";
 import LoginPage from "./component/components/Login/LoginPage";
+import RegisterPage from "./component/components/Register/RegisterPage";
+import PlaylistPage from "./component/components/Playlist/PlaylistPage";
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 
 
 
@@ -39,19 +43,23 @@ function App({ props }) {
         "11": { element: Container, name: "Search", route: "search-page", child: SearchPage, icon: SearchIcon, show: true, url: "/search" },
         "12": { element: Container, name: "Search", route: "lyrics-page", child: LyricsPage, icon: SearchIcon, show: false, url: "/lyrics" },
         "13": { element: LoginPage, name: "Login", route: "login-page", show: false, url: "/auth/login" },
+        "14": { element: RegisterPage, name: "Login", route: "login-page", show: false, url: "/auth/login" },
+        "16": { element: Container, name: "Playlist", route: "playlist-page", child: PlaylistPage, icon: PlaylistPlayIcon, show: false, url: "/playlist" },
 
     })
-
+    const { auth } = usePage().props.props;
     const [currentMenu, setCurrentMenu] = useState(props.menu);
     const [loading, setLoading] = useState({
         page: false,
     })
 
+    const [searchFocus, setSearchFocus] = useState(false);
+
     const MenuComponent = menu[currentMenu]?.element;
     const [screen, setScreen] = useState({
         width: window.innerWidth,
         height: window.innerHeight,
-    })
+    });
     const [menuComponent, setMenuComponent] = useState({
         width: parseInt(localStorage.getItem("menu-width")) || 200,
         edgeHover: false,
@@ -61,6 +69,25 @@ function App({ props }) {
     const [mainComponent, setMainComponent] = useState({
         width: window.innerWidth - parseInt(localStorage.getItem("menu-width")) || 200
     });
+
+    const [importantPlaylist, setImportantPlaylist] = useState({
+        favorite: null,
+        queue: null,
+    })
+    async function getImportantPlaylist() {
+        const response = await axios.post(route("get-favorite", { email: auth.user.email }));
+        if (response.data.success) {
+            setImportantPlaylist({
+                favorite: response.data.favorite_id[0].id_playlist,
+                queue: response.data.queue_id[0].id_playlist,
+            });
+            console.log("res: ", response.data)
+        }
+    }
+
+    useEffect(() => {
+        getImportantPlaylist()
+    }, []);
 
     const loadAudio = async (src = "/undefined.mp3") => {
         if (src === "/undefined.mp3") return;
@@ -229,7 +256,7 @@ function App({ props }) {
         return `${day} ${month} ${year}`;
     }
 
-    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId, setLoading, loading, MUSIC, setMUSIC, formatDate, musicId, setMusicId };
+    const contextValue = { menuComponent, setMenuComponent, screen, setScreen, URI, SONG, audioRef, setSONG, setAUDIO, AUDIO, mainComponent, setMainComponent, menu, ARTIST, setARTIST, artistId, setArtistId, currentMenu, setCurrentMenu, handleChangeMusic, ALBUM, setALBUM, getImageFilename, formatSeconds, albumId, setAlbumId, setLoading, loading, MUSIC, setMUSIC, formatDate, musicId, setMusicId, importantPlaylist, setImportantPlaylist, auth, searchFocus, setSearchFocus };
     return (
         <Context.Provider value={contextValue}>
 

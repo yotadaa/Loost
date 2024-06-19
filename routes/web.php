@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\AudioStreamController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ListenerController;
 use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,9 @@ Route::get('/dashboard-only', [ListenerController::class, 'DashboardOnly'])->nam
 Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
 
 
+Route::get('/playlist/{user_id}/{playlist_id}', [MenuController::class, 'PlaylistPage'])->name('playlist-page');
+
+
 Route::get('/artist/{artist_id}', [MenuController::class, 'ArtistPage'])->name("artist-page");
 Route::get('/artist-only/{artist_id}', [ListenerController::class, 'ArtistGet'])->name("artist-only");
 
@@ -48,8 +52,19 @@ Route::get('/music-only/{song_id}', [ListenerController::class, 'SongGet'])->nam
 
 
 Route::get('/search', [MenuController::class, 'SearchPage'])->name("search-page");
+Route::get('/search/{query}', [ListenerController::class, 'searchQuery'])->name("search-query");
 Route::post("/lyrics/{id}", [ListenerController::class, "getLyrics"])->name("get-lyrics");
 
 
 Route::get("/auth/login", [MenuController::class, 'LoginPage'])->name("login-page");
+Route::get("/auth/register", [MenuController::class, 'RegisterPage'])->name("register-page");
+
+Route::post("/auth/attempt/login", [AuthController::class, "login"])->name("attempt-login");
+Route::post("/auth/attempt/register", [AuthController::class, "register"])->name("attempt-register");
+Route::get("/auth/attempt/logout", [AuthController::class, "logout"])->name("attempt-logout");
+
+
+Route::post("/get-playlist/{email}", [ListenerController::class, "getPlaylist"])->name("get-playlist");
+Route::post("/get-favorite/{email}", [ListenerController::class, "getFavorite"])->name("get-favorite");
+Route::post("/add-playlist/{music_id}/{playlist_id}", [ListenerController::class, "addPlaylist"])->name("add-playlist");
 

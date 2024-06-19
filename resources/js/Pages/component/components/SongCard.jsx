@@ -6,22 +6,29 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Tooltip from '@mui/material/Tooltip';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Context from '../provider/context';
-
+import axios from 'axios';
 
 
 export default function SongCard({
     o, hover, setHover, index
 }) {
 
-    const { screen, setSONG, mainComponent, setAUDIO, audioRef, setArtistId, handleChangeMusic } = useContext(Context);
+
+    const { screen, setSONG, mainComponent, setAUDIO, audioRef, setArtistId, handleChangeMusic, importantPlaylist } = useContext(Context);
+    async function addPlaylist(musicId, playlistId) {
+
+        const response = await axios.post(route("add-playlist", { music_id: musicId, playlist_id: playlistId }));
+        console.log(response.data.message)
+    }
 
     return (
         <div className="relative shadow-md w-fit  overflow-hidden cursor-pointer rounded-md "
             style={{
                 minWidth: mainComponent.width / 6 < 120 ? 120 : mainComponent.width / 6 > 180 ? 180 : mainComponent.width / 6,
                 minHeight: mainComponent.width / 6 < 120 ? 120 : mainComponent.width / 6 > 180 ? 180 : mainComponent.width / 6,
+                maxWidth: 400
 
             }}
             onMouseEnter={() => {
@@ -79,9 +86,15 @@ export default function SongCard({
                 <MoreVertIcon className='scale-[1.3]' />
             </div>
             <div className={`left-2 flex gap-2 absolute transition-all duration-300 ease-in-out  ${hover.tren === index ? "bottom-2" : "-bottom-10"}  text-gray-50 scale-[0.9]`}>
-                <Tooltip title="Favorite" placement="top-start">
-                    <FavoriteBorderIcon />
-                </Tooltip>
+                <div
+                    onClick={() => {
+                        addPlaylist(o.id_musik, importantPlaylist.favorite)
+                    }}
+                >
+                    <Tooltip title="Favorite" placement="top-start">
+                        <FavoriteBorderIcon />
+                    </Tooltip>
+                </div>
                 <Tooltip title="Queue" placement="top-start">
                     <PlaylistAddIcon />
                 </Tooltip>

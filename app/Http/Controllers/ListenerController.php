@@ -290,11 +290,86 @@ class ListenerController extends Controller
 
 
     public function searchQuery(Request $request, $query) {
-        $lagu = null;
-        $album = null;
-        $penyanyi = null;
-        $playlist = null;
-        $genre = null;
+        $query = '%' . $query . '%';
+        $lagu = $song = DB::table('musics')
+                ->selectRaw('musics.id_musik,
+                            musics.judul,
+                            musics.source,
+                            musics.artwork,
+                            musics.single,
+                            albums.foto,
+                            musics.release_date,
+                            albums.id_album,
+                            albums.nama,
+                            artists.id_penyanyi as id_artist,
+                            COUNT(DISTINCT music_listener.id_music_listener) as total_views,
+                            GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names,
+                            GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
+                ->leftJoin('music_listener', 'musics.id_musik', '=', 'music_listener.id_musik')
+                ->leftJoin('albums', 'musics.id_album', '=', 'albums.id_album')
+                ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
+                ->leftJoin('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
+                ->join("countries",  "countries.id_country","=","musics.id_country")
+                ->where(function($q) use ($query) {
+                    $q->where('musics.judul', 'LIKE', $query)
+                      ->orWhere('artists.nama', 'LIKE', $query)
+                      ->orWhere('albums.nama', 'LIKE', $query);
+                })
+                ->groupBy('musics.id_musik',
+                        'musics.judul',
+                        'albums.foto',
+                        'musics.source',
+                        'musics.artwork',
+                        'musics.single',
+                        'musics.release_date',
+                        'albums.id_album',
+                        'albums.nama',
+                        'artists.id_penyanyi')
+                ->orderBy('total_views', 'desc')
+                ->get();
+        $album = DB::table("albums")
+        ->select("albums.*")
+        ->join("artists", "artists.id_penyanyi", "=", "albums.id_artist")
+        ->where(function($q) use ($query) {
+            $q->where("artists.nama", "LIKE", $query)
+                ->orWhere("albums.nama", "LIKE", $query);
+        })
+        ->get();
+        $countries = DB::table("countries")
+        ->where("nama", "LIKE", $query)
+        ->get();
+            
+            // For artists (penyanyi)
+        $penyanyi = DB::table("artists")
+            ->selectRaw("DISTINCT artists.*")
+            ->leftJoin("albums", "artists.id_penyanyi", "=", "albums.id_artist")
+            ->leftJoin("penyanyi_musik", "artists.id_penyanyi", "=", "penyanyi_musik.id_penyanyi")
+            ->leftJoin("musics", "penyanyi_musik.id_musik", "=", "musics.id_musik")
+            ->where(function($q) use ($query) {
+                $q->where("artists.nama", "LIKE", $query)
+                    ->orWhere("description", "LIKE", $query)
+                    ->orWhere("albums.nama", "LIKE", $query)
+                    ->orWhere("musics.judul", "LIKE", $query);
+            })
+            ->get();
+        
+        // For playlists
+        $playlist = DB::table("playlists")
+            ->where("nama", "LIKE", $query)
+            ->get();
+        
+        // For genres
+        $genre = DB::table("genres")->get();
+
+        return response()->json([
+            "success"=>true,
+            "musics" => $lagu,
+            "albums" => $album,
+            "artists" => $penyanyi,
+            "playlists" => $playlist,
+            "genres" => $genre,
+            "countries" => $countries,
+        ]);
     }
 
     public function getLyrics(Request $request, $id) {
@@ -310,5 +385,56 @@ class ListenerController extends Controller
                 "message"=>e
             ]);
         }
+    }
+
+    public function getPlaylist($email) {
+
+        $playlist = DB::table("playlists")->where("email", $email)->get();
+
+        return response()->json([
+            "success" => true,
+            "playlist" => $playlist,
+        ]);
+    }
+
+    public function addPlaylist($music_id, $playlist_id) {
+        $musicExistsInPlaylist = DB::table("playlist_music")
+                                ->where("id_musik", $music_id)
+                                ->where("id_playlist", $playlist_id)
+                                ->exists();
+        if ($musicExistsInPlaylist) {
+            return response()->json([
+                "success" => false,
+                "message" => "Song already in playlist",
+            ]);
+        }
+        $add = DB::table("playlist_music")->insert([
+            "id_playlist_music" => time(),
+            "id_playlist" => $playlist_id,
+            "id_musik" => $music_id
+        ]);
+        return response()->json([
+            "success" => true,
+            "message" => "Success adding song to playlist",
+        ]);
+    }
+
+    public function getFavorite($email) {
+        $favorite = DB::table("playlists")
+                    ->select("id_playlist")
+                    ->where("nama", "Favorite")
+                    ->where("email", $email)
+                    ->get();
+        $queue = DB::table("playlists")
+        ->select("id_playlist")
+        ->where("email", $email)
+        ->where("nama", "Queue")
+        ->get();
+
+        return response()->json([
+            "success"=>true,
+            "queue_id" => $queue,
+            "favorite_id" => $favorite
+        ]);
     }
 }

@@ -10,40 +10,14 @@ use Inertia\Inertia;
 class MenuController extends Controller
 {
     //
-    public function Home()
+    public function Home(Request $request)
     {
-
-        $startOfWeek = Carbon::now()->startOfMonth();
-        $endOfWeek = Carbon::now()->endOfMonth();
-
-        $populer_now = DB::table('music_listener')
-            ->select(
-                'musics.id_musik',
-                'musics.judul',
-                'musics.source',
-                'musics.artwork',
-                'albums.foto',
-                DB::raw('COUNT(DISTINCT music_listener.id_music_listener) as total_views'),
-                DB::raw('GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names'),
-                DB::raw('GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
-            )
-            ->join('musics', 'music_listener.id_musik', '=', 'musics.id_musik')
-            ->join('albums', 'musics.id_album', '=', 'albums.id_album')
-            ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
-            ->join('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
-            ->whereBetween('music_listener.created_at', [$startOfWeek, $endOfWeek])
-            ->groupBy('musics.id_musik', 'musics.judul', 'albums.foto', 'musics.source', 'musics.artwork', )
-            ->orderBy('total_views', 'DESC')
-            ->limit(20)
-            ->get();
-
         return Inertia::render('App', [
             "props" => [
-                "login" => auth()->check(),
+                "login" => $request->session()->get('authenticated'),
+                "auth" => $request->session()->get('auth'),
                 "menu" => 7,
-                "populer_now" => $populer_now,
-                "artists" => DB::table("artists")->get(),
-            ]
+            ],
         ]);
     }
 
@@ -54,6 +28,7 @@ class MenuController extends Controller
             "props" => [
                 "menu" => 8,
                 "artistId" => $artist_id,
+                "auth" => $request->session()->get('auth'),
             ]
         ]);
     }
@@ -64,6 +39,7 @@ class MenuController extends Controller
             "props" => [
                 "menu" => 9,
                 "albumId" => $album_id,
+                "auth" => $request->session()->get('auth'),
             ]
         ]);
     }
@@ -105,6 +81,7 @@ class MenuController extends Controller
                 "menu" => 10,
                 "music" => $song,
                 "musicId" => $song_id,
+                "auth" => $request->session()->get('auth'),
             ]
         ]);
     }
@@ -114,6 +91,7 @@ class MenuController extends Controller
         return Inertia::render('App', [
             "props" => [
                 "menu" => 11,
+                "auth" => $request->session()->get('auth'),
             ]]
         );
     }
@@ -122,6 +100,18 @@ class MenuController extends Controller
         return Inertia::render('App', [
             "props" => [
                 "menu" => 13,
+                "authenticated" => $request->session()->get('authenticated'),
+                "auth" => $request->session()->get('auth'),
+            ]
+        ]);
+    }
+
+    public function RegisterPage(Request $request){
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 14,
+                "authenticated" => $request->session()->get('authenticated'),
+                "auth" => $request->session()->get('auth'),
             ]
         ]);
     }

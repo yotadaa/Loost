@@ -26,8 +26,8 @@ export default function MenuVertical({ }) {
                             }}
                             onClick={() => {
                                 setArtistId(null);
-                                setCurrentMenu("7");
-                                history.pushState({}, "", "/home")
+                                setCurrentMenu(o.id);
+                                history.pushState({}, "", o.url)
                             }}
                         >
                             <o.icon className={`scale-[1.3] h-full transition-all duration-300 ease-in-out `} />

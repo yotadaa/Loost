@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 export default function PlayerController({ currentMenu, setCurrentMenu, prevMenu, setPrevMenu }) {
 
-    const { screen, audioRef, AUDIO, setAUDIO, SONG } = useContext(Context);
+    const { screen, audioRef, AUDIO, setAUDIO, SONG, searchFocus } = useContext(Context);
 
     const handlePlayPause = async () => {
         if (!audioRef.current || !audioRef.current.src) {
@@ -42,13 +42,16 @@ export default function PlayerController({ currentMenu, setCurrentMenu, prevMenu
                 setAUDIO(p => ({ ...p, playing: !p.playing }))
             }
         };
-
-        window.addEventListener("keydown", handleKeyDown);
+        if (searchFocus) {
+            window.addEventListener("keydown", handleKeyDown);
+        }
 
     }, []); // Ensure useEffect re-runs when AUDIO state changes
 
     useEffect(() => {
-        handlePlayPause();
+        if (!searchFocus) {
+            handlePlayPause();
+        }
     }, [AUDIO.playing])
 
     return (

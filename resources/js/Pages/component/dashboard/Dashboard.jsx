@@ -4,6 +4,7 @@ import TrendNow from './TrendNow';
 import TrendArtist from './TrendArtist';
 import PuncakKlasemen from './Klasemen/PuncakKlasemen';
 import axios from 'axios';
+import { usePage } from '@inertiajs/inertia-react';
 
 export default function Dashboard({ props }) {
 
@@ -30,6 +31,8 @@ export default function Dashboard({ props }) {
 
 
     useEffect(() => {
+
+        console.log("props: ", props)
         getDashboardProperties();
         setLoading(p => ({ ...p, page: false }));
         setARTIST(null);
@@ -42,7 +45,7 @@ export default function Dashboard({ props }) {
     return (
         <div className="h-full flex flex-col gap-10 py-10 w-full p-3 overflow-x-hidden custom-scrollbar"
         >
-            {props.login ? <TrendNow
+            {props.props.login ? <TrendNow
                 screen={screen}
                 menuComponent={menuComponent}
                 popularNow={popularNow}

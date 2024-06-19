@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
         $middleware->append(\App\Http\Middleware\HandleInertiaRequests::class);
+        // $middleware->group('web', function ($middleware) {
+        //     $middleware->push(\Illuminate\Session\Middleware\StartSession::class);
+        //     $middleware->push(\Illuminate\View\Middleware\ShareErrorsFromSession::class);
+        // });
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
