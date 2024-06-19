@@ -123,11 +123,11 @@ export default function Container({ Element, ...props }) {
     useEffect(() => {
         if (artistId) {
             setLoading(p => ({ ...p, page: true }));
-            setCurrentMenu("8");
+            if (artistId) setCurrentMenu("8");
         }
     }, [artistId]);
     useEffect(() => {
-        setArtistId(null);
+        // setArtistId(null);
     }, [])
     useEffect(() => {
         if (musicId) {

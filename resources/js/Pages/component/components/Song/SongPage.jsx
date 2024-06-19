@@ -12,14 +12,15 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function SongPage({ props }) {
 
-    const { MUSIC, formatSeconds, setMUSIC, screen, getImageFilename, handleChangeMusic, setArtistId, AUDIO, audioRef, formatDate, SONG, setAUDIO, musicId, setMusicId, setAlbumId, setLoading } = useContext(Context);
+    const { MUSIC, formatSeconds, setMUSIC, screen, getImageFilename, handleChangeMusic, setArtistId, AUDIO, audioRef, formatDate, SONG, setAUDIO, musicId, setMusicId, setAlbumId, setLoading, setCurrentMenu } = useContext(Context);
     if (musicId) {
         history.pushState({}, "", `/music/${musicId}`);
+    } else {
+        // history.pushState({}, "", `/music/${props.props.musicId}`);
     }
     const [filename, setFilename] = useState(getImageFilename(MUSIC && MUSIC.single === "T" ? MUSIC?.artwork : MUSIC?.foto));
     const [imageUrl, setImageUrl] = useState(filename ? route("get-image", { category: "albums", filename }) : '');
     const [relatedSong, setRelatedSong] = useState([]);
-
 
 
     async function loadRelatedSong(album_id) {
@@ -47,7 +48,8 @@ export default function SongPage({ props }) {
                 setMUSIC(response.data.song[0]);
                 loadRelatedSong(response.data.song[0]?.id_album);
                 setLoading(p => ({ ...p, page: false }))
-                console.log("success: ", response.data)
+                console.log("success: ", response.data);
+                // setArtistId(response.data.song[0]?.id_artist);
             } else {
                 console.log("Failed to load the song, success flag is false.");
             }
@@ -109,6 +111,7 @@ export default function SongPage({ props }) {
                         handleChangeMusic={handleChangeMusic}
                         SONG={SONG}
                         setAUDIO={setAUDIO}
+                        setCurrentMenu={setCurrentMenu}
                     />
                     <div className="p-4 text-xl font-thin text-gray-50">
                         <div>Album</div>

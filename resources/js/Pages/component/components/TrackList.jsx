@@ -6,7 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useEffect, useState } from 'react';
 
 export default function TrackList({
-    ARTIST, active, handleChangeMusic, SONG, setArtistId, formatSeconds, getImageFilename, id, LIST, display
+    ARTIST, active, handleChangeMusic, SONG, setArtistId, formatSeconds, getImageFilename, id, LIST, display, setMusicId, setCurrentMenu
 }) {
 
     const [more, setMore] = useState({
@@ -57,7 +57,12 @@ export default function TrackList({
 
                                 </div></div>
                             <div className="flex font-semibold flex-col">
-                                <div className="truncate max-w-[200px]">{o.judul} </div>
+                                <div className="truncate max-w-[200px] hover:underline cursor-pointer"
+                                    onClick={() => {
+                                        setMusicId(o?.id_musik);
+                                        setCurrentMenu("10");
+                                    }}
+                                >{o.judul} </div>
                                 <div className="text-xs text-gray-500 truncate max-w-[200px]"
                                     onClick={() => setArtistId(SONG.current?.id_artist)}
                                 >{ARTIST?.artist.nama}</div>

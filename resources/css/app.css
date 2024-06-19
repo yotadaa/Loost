@@ -91,3 +91,7 @@
 .grid-item .font-semibold {
     font-weight: 600;
 }
+.lyrics-container {
+    max-height: 100vh;
+    overflow-y: auto;
+}

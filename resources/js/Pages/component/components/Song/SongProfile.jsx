@@ -11,6 +11,7 @@ import LyricsIcon from '@mui/icons-material/Lyrics';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Tooltip } from "@mui/material";
 import { Song } from '../song';
+import { useEffect } from 'react';
 
 const PrettoSlider = styled(Slider)(({ theme }) => ({
     color: '#eeeeee',
@@ -62,12 +63,11 @@ const PrettoSlider = styled(Slider)(({ theme }) => ({
 }));
 
 export default function SongProfile({
-    MUSIC, imageUrl, setArtistId, AUDIO, audioRef, formatDate, handleChangeMusic, SONG, setAUDIO
+    MUSIC, imageUrl, setArtistId, AUDIO, audioRef, formatDate, handleChangeMusic, SONG, setAUDIO, setCurrentMenu
 }) {
 
     return (
         <header className="">
-
             <div className={` transition-all duration-300 ease-in-out relative w-full rounded-md overflow-hidden `}
             >
                 {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div> */}
@@ -89,7 +89,11 @@ export default function SongProfile({
                         <div className="text-bottom text-3xl font-bold text-nowrap truncate ">
                             <div>{MUSIC?.judul}</div>
                             <div className="font-thin text-sm hover:underline cursor-pointer w-fit"
-                                onClick={() => setArtistId(MUSIC?.id_penyanyi)}
+                                onClick={() => {
+                                    setArtistId(MUSIC?.id_artist);;
+                                    setCurrentMenu("8")
+                                    // setCurrentMenu("8");
+                                }}
                             >{MUSIC?.artist_names}</div>
                         </div>
                     </div>

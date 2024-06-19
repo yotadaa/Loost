@@ -13,9 +13,8 @@ import TrackList from "../TrackList";
 
 export default function ArtistPage({ props }) {
 
-    const { ARTIST, setARTIST, setLoading, artistId, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId, setArtistId } = useContext(Context);
+    const { ARTIST, setARTIST, setLoading, artistId, setCurrentMenu, SONG, handleChangeMusic, screen, setAlbumId, setArtistId, setMusicId } = useContext(Context);
     const [active, setActive] = useState(0);
-
 
     function getImageFilename(foto) {
         if (!foto) return null;
@@ -127,6 +126,8 @@ export default function ArtistPage({ props }) {
                         getImageFilename={getImageFilename}
                         id="popular"
                         display={0}
+                        setMusicId={setMusicId}
+                        setCurrentMenu={setCurrentMenu}
                     />
                     <div id="album"
                         style={{

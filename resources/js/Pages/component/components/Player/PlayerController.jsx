@@ -11,7 +11,7 @@ import LyricsIcon from '@mui/icons-material/Lyrics';
 import { Tooltip } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function PlayerController() {
+export default function PlayerController({ currentMenu, setCurrentMenu, prevMenu, setPrevMenu }) {
 
     const { screen, audioRef, AUDIO, setAUDIO, SONG } = useContext(Context);
 
@@ -57,7 +57,16 @@ export default function PlayerController() {
                 <Tooltip title="Lirik" placement="top-start" className={`${screen.width > 500 ? "hidden" : "block"}`}>
                     <div className="relative flex items-center justify-center">
                         <LyricsIcon className="scale-[0.9] text-gray-800" />
-                        <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "></div>
+                        <div className="w-[24px] h-[24px] absolute bg-opacity-[10%] bg-black scale-[1.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out "
+                            onClick={() => {
+                                setPrevMenu(currentMenu);
+                                if (currentMenu !== "12") {
+                                    setCurrentMenu("12")
+                                } else {
+                                    setCurrentMenu(prevMenu)
+                                }
+                            }}
+                        ></div>
                     </div>
                 </Tooltip>
                 <div className="relative flex items-center justify-center">

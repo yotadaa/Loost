@@ -6,7 +6,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 export default function SearchPage({ props }) {
 
-    const { setCurrentMenu } = useContext(Context);
+    const { setCurrentMenu, menuComponent } = useContext(Context);
     useEffect(() => {
     }, []);
 
@@ -20,9 +20,15 @@ export default function SearchPage({ props }) {
 
     return (
         <div
-            className="h-screen w-full pb-[150px] fixed "
+            className="h-screen w-full pb-[150px] fixed"
+            style={{
+            }}
         >
-            <div className='bg-gray-300 w-full pl-[100px] py-5 pb-0'>
+            <div className='bg-gray-300 w-full  py-5 pb-0'
+                style={{
+                    paddingLeft: menuComponent.width + 30,
+                }}
+            >
                 <div className='border-2 border-gray-500  rounded-3xl px-3 w-[400px] flex items-center justify-between'>
                     <input
                         className='bg-transparent p-2 rounded-full w-full outline-none placeholder:text-gray-500 text-sm border-none font-medium'

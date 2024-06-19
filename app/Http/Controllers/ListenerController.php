@@ -59,13 +59,14 @@ class ListenerController extends Controller
                              musics.release_date,
                              albums.id_album,
                              albums.nama,
+                             artists.id_penyanyi as id_artist,
                              COUNT(DISTINCT music_listener.id_music_listener) as total_views,
                              GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names,
                              GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
                 ->leftJoin('music_listener', 'musics.id_musik', '=', 'music_listener.id_musik')
                 ->leftJoin('albums', 'musics.id_album', '=', 'albums.id_album')
                 ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
-                ->join('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
+                ->leftJoin('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
                 ->where('musics.id_musik', '=', $song_id)
                 ->groupBy('musics.id_musik',
                           'musics.judul',
@@ -75,7 +76,8 @@ class ListenerController extends Controller
                           'musics.single',
                           'musics.release_date',
                           'albums.id_album',
-                          'albums.nama',)
+                          'albums.nama',
+                          'artists.id_penyanyi')
                 ->orderBy('total_views', 'desc')
                 ->get();
             $lyrics = DB::table("lyrics")
@@ -137,36 +139,37 @@ class ListenerController extends Controller
                 $songs = $songs->merge($albumSongs);
             }
             $singleSongs = DB::table('musics')
-                ->select(
-                    "musics.id_musik",
-                    "musics.judul",
-                    "musics.release_date",
-                    "musics.duration",
-                    "musics.id_genre",
-                    "musics.id_artist",
-                    "musics.single",
-                    "musics.source",
-                    "musics.artwork",
-                    DB::raw('COUNT(music_listener.id_musik) as total_views')
-                )
-                ->join('penyanyi_musik', 'penyanyi_musik.id_musik','=','musics.id_musik')
-                ->join("artists", "artists.id_penyanyi","=","penyanyi_musik.id_penyanyi")
-                ->leftJoin('music_listener', 'music_listener.id_musik', '=', 'musics.id_musik')
-                ->where('musics.single',"=", "T")
-                ->where("artists.id_penyanyi", $artist[0]->id_penyanyi)
-                ->groupBy(
-                    "musics.id_musik",
-                    "musics.judul",
-                    "musics.release_date",
-                    "musics.duration",
-                    "musics.id_genre",
-                    "musics.id_artist",
-                    "musics.single",
-                    "musics.source",
-                    "musics.artwork"
-                 )
-                ->orderBy('total_views', 'DESC')
-                ->get();
+            ->selectRaw('musics.id_musik,
+                         musics.judul,
+                         musics.source,
+                         musics.artwork,
+                         musics.single,
+                         albums.foto,
+                         musics.release_date,
+                         albums.id_album,
+                         albums.nama,
+                         artists.id_penyanyi as id_artist,
+                         COUNT(DISTINCT music_listener.id_music_listener) as total_views,
+                         GROUP_CONCAT(DISTINCT artists.nama ORDER BY artists.nama ASC SEPARATOR ", ") as artist_names,
+                         GROUP_CONCAT(DISTINCT artists.id_penyanyi ORDER BY artists.id_penyanyi ASC SEPARATOR ", ") as id_artist')
+            ->leftJoin('music_listener', 'musics.id_musik', '=', 'music_listener.id_musik')
+            ->leftJoin('albums', 'musics.id_album', '=', 'albums.id_album')
+            ->join('penyanyi_musik', 'musics.id_musik', '=', 'penyanyi_musik.id_musik')
+            ->leftJoin('artists', 'penyanyi_musik.id_penyanyi', '=', 'artists.id_penyanyi')
+            ->where('artists.id_penyanyi', $artist[0]->id_penyanyi)
+            ->where('musics.single', "T")
+            ->groupBy('musics.id_musik',
+                      'musics.judul',
+                      'albums.foto',
+                      'musics.source',
+                      'musics.artwork',
+                      'musics.single',
+                      'musics.release_date',
+                      'albums.id_album',
+                      'albums.nama',
+                      'artists.id_penyanyi')
+            ->orderBy('total_views', 'desc')
+            ->get();
 
             // Merge the album songs into the songs collection
             $songs =  $songs->merge($singleSongs);
@@ -292,5 +295,20 @@ class ListenerController extends Controller
         $penyanyi = null;
         $playlist = null;
         $genre = null;
+    }
+
+    public function getLyrics(Request $request, $id) {
+        try {
+            $lyrics = DB::table("lyrics")->where("id_musik", $id)->get();
+            return response()->json([
+                "success"=>true,
+                "lyrics"=>$lyrics
+            ]);
+        } catch (e) {
+            return response()->json([
+                "success"=>false,
+                "message"=>e
+            ]);
+        }
     }
 }

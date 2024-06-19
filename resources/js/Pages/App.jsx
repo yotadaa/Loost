@@ -20,6 +20,7 @@ import Children from "./Children";
 import SongPage from "./component/components/Song/SongPage";
 import SearchPage from "./component/components/Search/SearchPage";
 import LyricsPage from "./component/components/Lyrics/LyricsPage";
+import LoginPage from "./component/components/Login/LoginPage";
 
 
 
@@ -32,11 +33,12 @@ function App({ props }) {
         "4": { element: ListAlbums, name: "Lihat Daftar Album", route: "list-albums", show: false, url: "/" },
         "6": { element: PlayMusics, name: "Putar Musik", route: "play-musics", show: false, url: "/" },
         "7": { element: Container, name: "Home", route: "home", child: Dashboard, icon: HomeIcon, show: true },
-        "8": { element: Container, name: "Halaman Artist", route: "search-page", child: ArtistPage, icon: SearchIcon, show: false, url: "/home" },
+        "8": { element: Container, name: "Halaman Artist", route: "artist-page", child: ArtistPage, icon: SearchIcon, show: false, url: "/home" },
         "9": { element: Container, name: "Albums", route: "album-page", child: AlbumPage, icon: SearchIcon, show: false, url: "/" },
         "10": { element: Container, name: "Songs", route: "song-page", child: SongPage, icon: SearchIcon, show: false, url: "/" },
         "11": { element: Container, name: "Search", route: "search-page", child: SearchPage, icon: SearchIcon, show: true, url: "/search" },
         "12": { element: Container, name: "Search", route: "lyrics-page", child: LyricsPage, icon: SearchIcon, show: false, url: "/lyrics" },
+        "13": { element: LoginPage, name: "Login", route: "login-page", show: false, url: "/auth/login" },
 
     })
 
@@ -157,14 +159,41 @@ function App({ props }) {
         loading: false,
     });
 
-    function handleChangeMusic(o) {
-        setSONG(p => ({ ...p, current: o }));
-        localStorage.setItem("current-time", 0);
-        setAUDIO(p => ({
-            ...p, playing: true, init: false, currentTime: 0
-        }));
-        audioRef.current.play();
+    async function getLyrics(id) {
+        try {
+            const response = await axios.post(route("get-lyrics", { id }));
+            if (response.data.success) {
+                return response.data.lyrics
+            } else {
+                return [];
+            }
+        } catch (e) {
+            console.error(e)
+            return [];
+        }
     }
+
+    function handleChangeMusic(o) {
+        // Create an inner async function to handle the async/await logic
+        async function updateMusicWithLyrics() {
+            try {
+                const lyrics = await getLyrics(o?.id_musik);
+
+                setSONG(p => ({ ...p, current: { ...o, lyrics: lyrics } }));
+                localStorage.setItem("current-time", 0);
+                setAUDIO(p => ({
+                    ...p, playing: true, init: false, currentTime: 0
+                }));
+                audioRef.current.play();
+            } catch (error) {
+                console.error('Error fetching lyrics:', error);
+            }
+        }
+
+        // Call the inner async function
+        updateMusicWithLyrics();
+    }
+
 
     function formatSeconds(seconds) {
         // Handle negative or non-numeric inputs (optional)

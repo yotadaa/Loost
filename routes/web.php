@@ -48,4 +48,8 @@ Route::get('/music-only/{song_id}', [ListenerController::class, 'SongGet'])->nam
 
 
 Route::get('/search', [MenuController::class, 'SearchPage'])->name("search-page");
+Route::post("/lyrics/{id}", [ListenerController::class, "getLyrics"])->name("get-lyrics");
+
+
+Route::get("/auth/login", [MenuController::class, 'LoginPage'])->name("login-page");
 

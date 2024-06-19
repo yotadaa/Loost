@@ -204,12 +204,20 @@ export default function Player({ }) {
                         >{SONG.current?.judul || "Song title"}</p>
                         <p className="text-xs font-semibold hover:underline cursor-pointer"
                             onClick={() => {
-                                setArtistId(SONG.current?.id_artist);
+                                setArtistId(SONG.current?.id_artist);;
+                                setCurrentMenu("8")
+                                console.log(SONG.current)
                             }}
                         >{SONG.current?.artist_names || "Song artists"}</p>
                     </div>
                 </div>
-                <PlayerController />
+                <PlayerController
+                    currentMenu={currentMenu}
+                    prevMenu={prevMenu}
+                    setPrevMenu={setPrevMenu}
+                    setCurrentMenu={setCurrentMenu}
+
+                />
                 <div
                     className="bg-gradient-to-r from-white via-white/50 via-20% to-gray-300 w-full flex items-center justify-end h-full gap-2 max-w-[300px] px-5"
                     style={{

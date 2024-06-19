@@ -117,4 +117,12 @@ class MenuController extends Controller
             ]]
         );
     }
+
+    public function LoginPage(Request $request){
+        return Inertia::render('App', [
+            "props" => [
+                "menu" => 13,
+            ]
+        ]);
+    }
 }
